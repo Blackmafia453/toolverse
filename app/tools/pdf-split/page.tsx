@@ -21,8 +21,6 @@ export default function PDFSplitPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-
-
   const handleUpload = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -30,43 +28,32 @@ export default function PDFSplitPage() {
 
     if (!uploadedFile) return;
 
-
     if (uploadedFile.type !== "application/pdf") {
       setMessage("Please upload a valid PDF file.");
       return;
     }
 
-
     setFile(uploadedFile);
     setDownloadUrl("");
     setMessage("");
-
 
     const url = URL.createObjectURL(uploadedFile);
 
     setPreviewUrl(url);
 
-
     const bytes = await uploadedFile.arrayBuffer();
 
     const pdf = await PDFDocument.load(bytes);
-
 
     setPages(pdf.getPageCount());
 
     setPageRange("1");
   };
 
-
-
-
   const splitPDF = async () => {
-
     if (!file) return;
 
-
     try {
-
       setLoading(true);
       setMessage("");
 
@@ -76,83 +63,62 @@ export default function PDFSplitPage() {
 
       const newPdf = await PDFDocument.create();
 
-
-
       const selectedPages = pageRange
         .split(",")
-        .flatMap((range)=>{
-
-          if(range.includes("-")){
-
-            const [start,end] = range
+        .flatMap((range) => {
+          if (range.includes("-")) {
+            const [start, end] = range
               .split("-")
               .map(Number);
 
-
             return Array.from(
               {
-                length:end-start+1
+                length: end - start + 1,
               },
-              (_,i)=>start+i
+              (_, i) => start + i
             );
-
           }
 
-
           return [Number(range)];
-
         })
         .filter(
-          (page)=>
+          (page) =>
             page > 0 &&
             page <= pages
         );
 
-
-
-      if(selectedPages.length === 0){
-
+      if (selectedPages.length === 0) {
         setMessage("Enter valid page numbers.");
-
         setLoading(false);
-
         return;
-
       }
-
-
-
 
       const copiedPages = await newPdf.copyPages(
         originalPdf,
-        selectedPages.map(
-          (page)=>page-1
-        )
+        selectedPages.map((page) => page - 1)
       );
 
-
-      copiedPages.forEach((page)=>{
-
+      copiedPages.forEach((page) => {
         newPdf.addPage(page);
-
       });
 
+    const output = await newPdf.save();
 
+const safeArrayBuffer = new ArrayBuffer(output.byteLength);
 
-      const output = await newPdf.save();
+const view = new Uint8Array(safeArrayBuffer);
 
+view.set(output);
 
-
-      const blob = new Blob(
-        [output],
-        {
-          type:"application/pdf"
-        }
-      );
+const blob = new Blob(
+  [safeArrayBuffer],
+  {
+    type: "application/pdf",
+  }
+);
 
 
       const url = URL.createObjectURL(blob);
-
 
       setDownloadUrl(url);
 
@@ -160,10 +126,7 @@ export default function PDFSplitPage() {
         "PDF split successfully!"
       );
 
-
-
-    } catch(error){
-
+    } catch (error) {
       console.error(error);
 
       setMessage(
@@ -172,18 +135,11 @@ export default function PDFSplitPage() {
 
     }
 
-
     setLoading(false);
-
   };
 
 
-
-
-
-
   return (
-
     <main className="
       min-h-screen
       bg-gradient-to-br
@@ -194,14 +150,9 @@ export default function PDFSplitPage() {
       py-12
     ">
 
-
       <div className="max-w-6xl mx-auto">
 
-
-        {/* Hero */}
-
         <section className="text-center mb-12">
-
 
           <div className="
             inline-flex
@@ -224,20 +175,14 @@ export default function PDFSplitPage() {
           </div>
 
 
-
-
           <h1 className="
             text-4xl
             md:text-5xl
             font-bold
             text-gray-900
           ">
-
             Split PDF Files Easily
-
           </h1>
-
-
 
 
           <p className="
@@ -248,20 +193,12 @@ export default function PDFSplitPage() {
             text-lg
             leading-8
           ">
-
             Extract selected pages from PDF documents instantly.
             Secure browser-based processing with no file uploads.
-
           </p>
-
 
         </section>
 
-
-
-
-
-        {/* Main Cards */}
 
 
         <section className="
@@ -269,10 +206,6 @@ export default function PDFSplitPage() {
           md:grid-cols-2
           gap-8
         ">
-
-
-
-          {/* Upload Card */}
 
 
           <div className="
@@ -299,25 +232,14 @@ export default function PDFSplitPage() {
                 bg-indigo-100
                 text-indigo-600
               ">
-
                 <FiUploadCloud size={25}/>
-
               </div>
 
-
-              <h2 className="
-                text-xl
-                font-bold
-              ">
-
+              <h2 className="text-xl font-bold">
                 Upload PDF
-
               </h2>
 
-
             </div>
-
-
 
 
             <label className="
@@ -333,7 +255,6 @@ export default function PDFSplitPage() {
               transition
             ">
 
-
               <FiFileText
                 className="
                   mx-auto
@@ -343,13 +264,9 @@ export default function PDFSplitPage() {
                 size={45}
               />
 
-
               <p className="text-gray-600">
-
                 Click to select PDF file
-
               </p>
-
 
 
               <input
@@ -359,14 +276,10 @@ export default function PDFSplitPage() {
                 onChange={handleUpload}
               />
 
-
             </label>
 
 
-
-
             {file && (
-
               <div className="
                 mt-6
                 rounded-2xl
@@ -374,31 +287,20 @@ export default function PDFSplitPage() {
                 p-5
               ">
 
-
                 <p className="font-semibold text-gray-900">
-
                   {file.name}
-
                 </p>
-
 
                 <p className="
                   text-sm
                   text-gray-600
                   mt-2
                 ">
-
                   Total Pages: {pages}
-
                 </p>
 
-
               </div>
-
             )}
-
-
-
 
 
 
@@ -406,17 +308,13 @@ export default function PDFSplitPage() {
 
               <div className="mt-6">
 
-
                 <label className="
                   text-sm
                   font-semibold
                   text-gray-700
                 ">
-
                   Select Pages
-
                 </label>
-
 
 
                 <input
@@ -435,7 +333,6 @@ export default function PDFSplitPage() {
                     focus:ring-indigo-500
                   "
                 />
-
 
 
                 <button
@@ -459,42 +356,26 @@ export default function PDFSplitPage() {
                     : "Split PDF"
                   }
 
-
                 </button>
-
 
               </div>
 
             )}
 
 
-
-
-
             {message && (
-
               <p className="
                 mt-5
                 text-indigo-600
                 font-medium
               ">
-
                 {message}
-
               </p>
-
             )}
-
-
 
           </div>
 
 
-
-
-
-
-          {/* Preview */}
 
 
 
@@ -509,14 +390,12 @@ export default function PDFSplitPage() {
           ">
 
 
-
             <div className="
               flex
               items-center
               gap-3
               mb-6
             ">
-
 
               <div className="
                 p-3
@@ -530,19 +409,11 @@ export default function PDFSplitPage() {
               </div>
 
 
-              <h2 className="
-                text-xl
-                font-bold
-              ">
-
+              <h2 className="text-xl font-bold">
                 PDF Preview
-
               </h2>
 
-
             </div>
-
-
 
 
             {
@@ -567,16 +438,11 @@ export default function PDFSplitPage() {
                   justify-center
                   text-gray-400
                 ">
-
                   Upload PDF to preview
-
                 </div>
 
               )
             }
-
-
-
 
 
 
@@ -607,10 +473,7 @@ export default function PDFSplitPage() {
 
             )}
 
-
-
           </div>
-
 
 
         </section>
@@ -619,19 +482,12 @@ export default function PDFSplitPage() {
 
 
 
-
-
-
-        {/* Features */}
-
-
         <section className="
           mt-12
           grid
           md:grid-cols-3
           gap-6
         ">
-
 
           {[
             {
@@ -649,9 +505,7 @@ export default function PDFSplitPage() {
               title:"Simple",
               text:"Easy page extraction."
             }
-
           ].map((item,index)=>(
-
 
             <div
               key={index}
@@ -666,51 +520,27 @@ export default function PDFSplitPage() {
               "
             >
 
-
-              <div className="
-                text-indigo-600
-                mb-4
-              ">
-
+              <div className="text-indigo-600 mb-4">
                 {item.icon}
-
               </div>
 
 
-              <h3 className="
-                font-bold
-                text-lg
-              ">
-
+              <h3 className="font-bold text-lg">
                 {item.title}
-
               </h3>
 
 
-              <p className="
-                mt-2
-                text-gray-600
-              ">
-
+              <p className="mt-2 text-gray-600">
                 {item.text}
-
               </p>
-
 
             </div>
 
-
           ))}
-
 
         </section>
 
 
-
-
-
-
-        {/* Info */}
 
 
         <section className="
@@ -724,16 +554,13 @@ export default function PDFSplitPage() {
           backdrop-blur
         ">
 
-
           <h2 className="
             text-2xl
             font-bold
             text-gray-900
             mb-4
           ">
-
             About PDF Split Tool
-
           </h2>
 
 
@@ -741,22 +568,16 @@ export default function PDFSplitPage() {
             text-gray-600
             leading-8
           ">
-
             ToolVerse PDF Split Tool helps you extract selected pages
             from PDF files quickly. All processing happens directly
             in your browser, keeping your documents private and secure.
-
           </p>
-
 
         </section>
 
 
-
       </div>
 
-
     </main>
-
   );
 }
