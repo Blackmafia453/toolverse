@@ -45,8 +45,15 @@ export default function PdfMerge() {
 
       const pdfBytes = await mergedPdf.save();
 
+      // Convert Uint8Array to clean ArrayBuffer for Vercel TypeScript build
+      const buffer = new ArrayBuffer(pdfBytes.length);
+
+      const view = new Uint8Array(buffer);
+
+      view.set(pdfBytes);
+
       const blob = new Blob(
-        [new Uint8Array(pdfBytes)],
+        [buffer],
         {
           type: "application/pdf",
         }
