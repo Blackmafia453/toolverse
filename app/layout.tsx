@@ -12,13 +12,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
 export const metadata: Metadata = {
   title: "ToolVerse - Free Online Tools",
   description:
     "ToolVerse provides powerful free online tools including calculators, converters, generators, and productivity tools.",
+  verification: {
+    google:
+      "gwgj0QPVav_qdBjoEBY-McpoQN4LajWUXp9D5HBteTA",
+  },
 };
-
 
 export default function RootLayout({
   children,
