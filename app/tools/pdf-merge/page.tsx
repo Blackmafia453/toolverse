@@ -45,13 +45,17 @@ export default function PdfMerge() {
 
       const pdfBytes = await mergedPdf.save();
 
-      const blob = new Blob([pdfBytes], {
-        type: "application/pdf",
-      });
+      const blob = new Blob(
+        [new Uint8Array(pdfBytes)],
+        {
+          type: "application/pdf",
+        }
+      );
 
       const url = URL.createObjectURL(blob);
 
       setDownloadUrl(url);
+
     } catch (error) {
       console.error("PDF Merge Error:", error);
     } finally {
@@ -61,15 +65,16 @@ export default function PdfMerge() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 px-4 py-12">
+
       <div className="mx-auto max-w-6xl">
 
         <PDFHero />
 
-        <PDFUpload 
+        <PDFUpload
           selectFiles={selectFiles}
         />
 
-        <PDFFileList 
+        <PDFFileList
           files={files}
         />
 
@@ -95,6 +100,7 @@ export default function PdfMerge() {
         </div>
 
       </div>
+
     </main>
   );
 }
