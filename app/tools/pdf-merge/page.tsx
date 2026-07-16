@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { PDFDocument } from "pdf-lib";
 
 import PDFHero from "./PDFHero";
@@ -13,74 +13,65 @@ export default function PdfMerge() {
   const [downloadUrl, setDownloadUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const selectFiles = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const selectFiles = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
     setFiles(Array.from(e.target.files));
     setDownloadUrl("");
   };
 
-
   const mergeFiles = async () => {
     if (files.length < 2) return;
 
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const mergedPdf = await PDFDocument.create();
+      const mergedPdf = await PDFDocument.create();
 
-    for (const file of files) {
-      const bytes = await file.arrayBuffer();
+      for (const file of files) {
+        const bytes = await file.arrayBuffer();
 
-      const pdf = await PDFDocument.load(bytes);
+        const pdf = await PDFDocument.load(bytes);
 
-      const copiedPages = await mergedPdf.copyPages(
-        pdf,
-        pdf.getPageIndices()
-      );
+        const copiedPages = await mergedPdf.copyPages(
+          pdf,
+          pdf.getPageIndices()
+        );
 
-      copiedPages.forEach((page) => {
-        mergedPdf.addPage(page);
-      });
-    }
-
-
-    const pdfBytes = await mergedPdf.save();
-
-
-    const blob = new Blob(
-      [pdfBytes],
-      {
-        type: "application/pdf",
+        copiedPages.forEach((page) => {
+          mergedPdf.addPage(page);
+        });
       }
-    );
 
+      const pdfBytes = await mergedPdf.save();
 
-    const url = URL.createObjectURL(blob);
+      const blob = new Blob([pdfBytes], {
+        type: "application/pdf",
+      });
 
-    setDownloadUrl(url);
-    setLoading(false);
+      const url = URL.createObjectURL(blob);
+
+      setDownloadUrl(url);
+    } catch (error) {
+      console.error("PDF Merge Error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
-
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 px-4 py-12">
-
       <div className="mx-auto max-w-6xl">
 
         <PDFHero />
 
-
-        <PDFUpload
+        <PDFUpload 
           selectFiles={selectFiles}
         />
 
-
-        <PDFFileList
+        <PDFFileList 
           files={files}
         />
-
 
         <PDFDownload
           filesCount={files.length}
@@ -89,13 +80,11 @@ export default function PdfMerge() {
           mergeFiles={mergeFiles}
         />
 
-
         <div className="mt-12 rounded-3xl border border-white/60 bg-white/80 p-8 shadow-xl backdrop-blur">
 
           <h2 className="mb-4 text-2xl font-bold text-gray-900">
             About PDF Merge Tool
           </h2>
-
 
           <p className="leading-8 text-gray-600">
             ToolVerse PDF Merge Tool allows you to combine multiple PDF files
@@ -105,9 +94,7 @@ export default function PdfMerge() {
 
         </div>
 
-
       </div>
-
     </main>
   );
 }
