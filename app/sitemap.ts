@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl =
-    "https://toolverse-oisq5mlb1-blackmafia454.vercel.app";
+    "https://soupxor.com";
 
   return [
     {
@@ -34,7 +34,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/terms`,
       lastModified: new Date(),
     },
-
 
     // Tools
 
