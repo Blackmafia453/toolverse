@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
     },
     sitemap:
-      "https://toolverse-topaz-nu.vercel.app/sitemap.xml",
+      "https://soupxor.com/sitemap.xml",
   };
 }
