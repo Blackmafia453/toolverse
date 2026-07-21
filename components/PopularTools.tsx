@@ -8,158 +8,138 @@ import {
   FaFilePdf,
 } from "react-icons/fa";
 
-
 export default function PopularTools() {
-
   const tools = [
     {
       name: "Word Counter",
       description:
-        "Count words, characters and paragraphs instantly.",
+        "Count words, characters and paragraphs instantly with Soupxor.",
       icon: <FaFileAlt />,
       link: "/tools/word-counter",
     },
     {
       name: "Password Generator",
       description:
-        "Generate strong and secure passwords.",
+        "Generate strong, secure passwords in seconds.",
       icon: <FaShieldAlt />,
       link: "/tools/password-generator",
     },
     {
       name: "QR Code Generator",
       description:
-        "Create professional QR codes quickly and easily.",
+        "Create high-quality QR codes for URLs, text and more.",
       icon: <FaQrcode />,
       link: "/tools/qr-code-generator",
     },
     {
       name: "Age Calculator",
       description:
-        "Calculate your exact age instantly.",
+        "Calculate your exact age with instant results.",
       icon: <FaCalendarAlt />,
       link: "/tools/age-calculator",
     },
     {
       name: "Image Compressor",
       description:
-        "Compress images while maintaining quality.",
+        "Reduce image size while preserving excellent quality.",
       icon: <FaCompressArrowsAlt />,
       link: "/tools/image-compressor",
     },
     {
       name: "PDF Merge",
       description:
-        "Combine multiple PDF files in seconds.",
+        "Merge multiple PDF documents securely in your browser.",
       icon: <FaFilePdf />,
       link: "/tools/pdf-merge",
     },
   ];
 
-
-
   return (
     <section
       className="
-      relative
-      py-24
-      overflow-hidden
+        relative
+        py-24
+        overflow-hidden
       "
     >
-
-
       <div
         className="
-        absolute
-        inset-0
-        -z-10
-        bg-gradient-to-b
-        from-white
-        via-indigo-50/40
-        to-white
+          absolute
+          inset-0
+          -z-10
+          bg-gradient-to-b
+          from-white
+          via-indigo-50/40
+          to-white
         "
       />
 
-
-
       <div
         className="
-        max-w-7xl
-        mx-auto
-        px-6
+          max-w-7xl
+          mx-auto
+          px-6
         "
       >
-
-
-
         {/* Heading */}
         <div
           className="
-          text-center
-          mb-16
+            text-center
+            mb-16
           "
         >
-
           <span
             className="
-            text-indigo-600
-            font-semibold
-            uppercase
-            tracking-[0.2em]
-            text-sm
+              text-indigo-600
+              font-semibold
+              uppercase
+              tracking-[0.2em]
+              text-sm
             "
           >
             Featured Tools
           </span>
 
-
           <h2
             className="
-            mt-4
-            text-4xl
-            md:text-5xl
-            font-extrabold
-            text-slate-900
+              mt-4
+              text-4xl
+              md:text-5xl
+              font-extrabold
+              text-slate-900
             "
           >
-            Popular Tools
+            Most Popular Tools
           </h2>
-
 
           <p
             className="
-            mt-5
-            text-lg
-            text-slate-600
+              mt-5
+              max-w-2xl
+              mx-auto
+              text-lg
+              text-slate-600
             "
           >
-            Explore the most popular productivity tools used by our community.
+            Discover the online tools trusted by thousands of users on
+            <span className="font-semibold text-slate-900"> Soupxor</span> to
+            boost productivity, simplify workflows and save time.
           </p>
-
-
         </div>
-
-
-
-
-
 
         {/* Cards */}
         <div
           className="
-          grid
-          md:grid-cols-2
-          lg:grid-cols-3
-          gap-8
+            grid
+            md:grid-cols-2
+            lg:grid-cols-3
+            gap-8
           "
         >
-
-          {
-            tools.map((tool) => (
-
-              <div
-                key={tool.name}
-                className="
+          {tools.map((tool) => (
+            <div
+              key={tool.name}
+              className="
                 group
                 glass
                 rounded-3xl
@@ -167,15 +147,13 @@ export default function PopularTools() {
                 shadow-soft
                 hover:shadow-hover
                 hover:-translate-y-2
-                transition
-                "
-              >
-
-
-
-                {/* Icon */}
-                <div
-                  className="
+                transition-all
+                duration-300
+              "
+            >
+              {/* Icon */}
+              <div
+                className="
                   w-16
                   h-16
                   flex
@@ -189,49 +167,37 @@ export default function PopularTools() {
                   to-purple-600
                   shadow-md
                   group-hover:scale-110
-                  transition
-                  "
-                >
-                  {tool.icon}
-                </div>
+                  transition-transform
+                  duration-300
+                "
+              >
+                {tool.icon}
+              </div>
 
-
-
-
-
-                <h3
-                  className="
+              <h3
+                className="
                   mt-7
                   text-2xl
                   font-bold
                   text-slate-900
-                  "
-                >
-                  {tool.name}
-                </h3>
+                "
+              >
+                {tool.name}
+              </h3>
 
-
-
-
-
-                <p
-                  className="
+              <p
+                className="
                   mt-3
                   text-slate-600
                   leading-7
-                  "
-                >
-                  {tool.description}
-                </p>
+                "
+              >
+                {tool.description}
+              </p>
 
-
-
-
-
-
-                <Link
-                  href={tool.link}
-                  className="
+              <Link
+                href={tool.link}
+                className="
                   inline-flex
                   items-center
                   gap-2
@@ -246,28 +212,17 @@ export default function PopularTools() {
                   to-purple-600
                   hover:shadow-hover
                   hover:-translate-y-0.5
-                  transition
-                  "
-                >
-                  Open Tool
-                  <span>→</span>
-                </Link>
-
-
-
-              </div>
-
-            ))
-          }
-
-
+                  transition-all
+                  duration-300
+                "
+              >
+                Open Tool
+                <span>→</span>
+              </Link>
+            </div>
+          ))}
         </div>
-
-
-
       </div>
-
-
     </section>
   );
 }

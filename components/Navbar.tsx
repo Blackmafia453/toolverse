@@ -8,16 +8,12 @@ import {
   HiOutlineSparkles,
 } from "react-icons/hi";
 
-
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
-
   return (
     <header className="sticky top-0 z-50">
-
       <div className="mx-auto max-w-7xl px-6 pt-4">
-
         <div
           className="
           glass
@@ -31,13 +27,8 @@ export default function Navbar() {
           px-6
           "
         >
-
           {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 group"
-          >
-
+          <Link href="/" className="flex items-center gap-2 group">
             <div
               className="
               h-11
@@ -56,7 +47,6 @@ export default function Navbar() {
               <HiOutlineSparkles className="text-2xl" />
             </div>
 
-
             <span
               className="
               text-2xl
@@ -65,7 +55,7 @@ export default function Navbar() {
               text-slate-900
               "
             >
-              Tool
+              Soup
               <span
                 className="
                 bg-gradient-to-r
@@ -75,13 +65,10 @@ export default function Navbar() {
                 text-transparent
                 "
               >
-                Verse
+                xor
               </span>
             </span>
-
           </Link>
-
-
 
           {/* Desktop Navigation */}
           <nav
@@ -95,7 +82,6 @@ export default function Navbar() {
             text-slate-600
             "
           >
-
             <Link
               href="/"
               className="
@@ -105,7 +91,6 @@ export default function Navbar() {
             >
               Home
             </Link>
-
 
             <Link
               href="/tools"
@@ -117,7 +102,6 @@ export default function Navbar() {
               Tools
             </Link>
 
-
             <Link
               href="/about"
               className="
@@ -128,7 +112,6 @@ export default function Navbar() {
               About
             </Link>
 
-
             <Link
               href="/contact"
               className="
@@ -138,10 +121,7 @@ export default function Navbar() {
             >
               Contact
             </Link>
-
           </nav>
-
-
 
           {/* CTA */}
           <Link
@@ -168,8 +148,6 @@ export default function Navbar() {
             Get Started
           </Link>
 
-
-
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
@@ -179,24 +157,14 @@ export default function Navbar() {
             text-slate-700
             "
           >
-            {
-              menuOpen
-                ? <HiOutlineX />
-                : <HiOutlineMenuAlt3 />
-            }
-
+            {menuOpen ? <HiOutlineX /> : <HiOutlineMenuAlt3 />}
           </button>
-
-
         </div>
 
-
         {/* Mobile Menu */}
-        {
-          menuOpen && (
-
-            <div
-              className="
+        {menuOpen && (
+          <div
+            className="
               md:hidden
               mt-3
               glass
@@ -204,54 +172,36 @@ export default function Navbar() {
               shadow-soft
               p-6
               "
-            >
-
-              <nav
-                className="
+          >
+            <nav
+              className="
                 flex
                 flex-col
                 gap-5
                 font-semibold
                 text-slate-700
                 "
-              >
+            >
+              <Link href="/" onClick={() => setMenuOpen(false)}>
+                Home
+              </Link>
 
-                <Link
-                  href="/"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Home
-                </Link>
+              <Link href="/tools" onClick={() => setMenuOpen(false)}>
+                Tools
+              </Link>
 
+              <Link href="/about" onClick={() => setMenuOpen(false)}>
+                About
+              </Link>
 
-                <Link
-                  href="/tools"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Tools
-                </Link>
+              <Link href="/contact" onClick={() => setMenuOpen(false)}>
+                Contact
+              </Link>
 
-
-                <Link
-                  href="/about"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  About
-                </Link>
-
-
-                <Link
-                  href="/contact"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Contact
-                </Link>
-
-
-                <Link
-                  href="/tools"
-                  onClick={() => setMenuOpen(false)}
-                  className="
+              <Link
+                href="/tools"
+                onClick={() => setMenuOpen(false)}
+                className="
                   text-center
                   py-3
                   rounded-xl
@@ -260,21 +210,13 @@ export default function Navbar() {
                   from-indigo-600
                   to-purple-600
                   "
-                >
-                  Get Started
-                </Link>
-
-
-              </nav>
-
-            </div>
-
-          )
-        }
-
-
+              >
+                Get Started
+              </Link>
+            </nav>
+          </div>
+        )}
       </div>
-
     </header>
   );
 }

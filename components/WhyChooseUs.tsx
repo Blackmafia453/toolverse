@@ -7,158 +7,115 @@ import {
   FaMousePointer,
 } from "react-icons/fa";
 
-
 export default function WhyChooseUs() {
-
-
   const features = [
     {
       title: "Lightning Fast",
       description:
-        "All tools process quickly with smooth and reliable performance.",
+        "Every Soupxor tool is optimized for speed, delivering instant results directly in your browser.",
       icon: <FaBolt />,
     },
     {
       title: "Secure & Private",
       description:
-        "Your files and data remain protected inside your browser.",
+        "Your files and data stay on your device whenever possible, ensuring maximum privacy and security.",
       icon: <FaShieldAlt />,
     },
     {
       title: "100% Free",
       description:
-        "Access all ToolVerse utilities without any hidden cost.",
+        "Use all Soupxor online tools completely free with no hidden charges or subscriptions.",
       icon: <FaGift />,
     },
     {
       title: "Fully Responsive",
       description:
-        "Enjoy a perfect experience on mobile, tablet and desktop.",
+        "Enjoy a seamless experience across desktop, tablet and mobile devices.",
       icon: <FaMobileAlt />,
     },
     {
       title: "Modern Technology",
       description:
-        "Built with fast and reliable web technologies.",
+        "Built using the latest web technologies for reliability, speed and performance.",
       icon: <FaRocket />,
     },
     {
-      title: "Easy To Use",
+      title: "Easy to Use",
       description:
-        "Simple interfaces designed for everyone.",
+        "Clean, intuitive interfaces designed to help you complete tasks quickly and efficiently.",
       icon: <FaMousePointer />,
     },
   ];
 
-
-
   return (
-    <section
-      className="
-      relative
-      py-24
-      overflow-hidden
-      "
-    >
-
-
+    <section className="relative py-24 overflow-hidden">
       <div
         className="
-        absolute
-        inset-0
-        -z-10
-        bg-gradient-to-b
-        from-white
-        via-indigo-50/40
-        to-white
+          absolute
+          inset-0
+          -z-10
+          bg-gradient-to-b
+          from-white
+          via-indigo-50/40
+          to-white
         "
       />
 
-
-
-      <div
-        className="
-        max-w-7xl
-        mx-auto
-        px-6
-        "
-      >
-
-
-
-
+      <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
-        <div
-          className="
-          text-center
-          mb-16
-          "
-        >
-
+        <div className="text-center mb-16">
           <span
             className="
-            text-indigo-600
-            font-semibold
-            uppercase
-            tracking-[0.2em]
-            text-sm
+              text-indigo-600
+              font-semibold
+              uppercase
+              tracking-[0.2em]
+              text-sm
             "
           >
-            Why ToolVerse
+            Why Soupxor
           </span>
-
-
 
           <h2
             className="
-            mt-4
-            text-4xl
-            md:text-5xl
-            font-extrabold
-            text-slate-900
+              mt-4
+              text-4xl
+              md:text-5xl
+              font-extrabold
+              text-slate-900
             "
           >
-            Why Choose ToolVerse?
+            Why Choose Soupxor?
           </h2>
-
-
 
           <p
             className="
-            mt-5
-            text-lg
-            text-slate-600
+              mt-5
+              max-w-2xl
+              mx-auto
+              text-lg
+              text-slate-600
             "
           >
-            Everything you need in one fast, simple and powerful platform.
+            Soupxor combines speed, privacy, reliability and ease of use to
+            provide professional online tools that help you work smarter every
+            day.
           </p>
-
-
         </div>
-
-
-
-
-
-
 
         {/* Feature Cards */}
         <div
           className="
-          grid
-          md:grid-cols-2
-          lg:grid-cols-3
-          gap-8
+            grid
+            md:grid-cols-2
+            lg:grid-cols-3
+            gap-8
           "
         >
-
-
-          {
-            features.map((feature) => (
-
-              <div
-                key={feature.title}
-                className="
+          {features.map((feature) => (
+            <div
+              key={feature.title}
+              className="
                 group
                 glass
                 rounded-3xl
@@ -166,16 +123,12 @@ export default function WhyChooseUs() {
                 shadow-soft
                 hover:shadow-hover
                 hover:-translate-y-2
-                transition
-                "
-              >
-
-
-
-
-                {/* Icon */}
-                <div
-                  className="
+                transition-all
+                duration-300
+              "
+            >
+              <div
+                className="
                   w-16
                   h-16
                   flex
@@ -189,55 +142,37 @@ export default function WhyChooseUs() {
                   to-purple-600
                   shadow-md
                   group-hover:scale-110
-                  transition
-                  "
-                >
-                  {feature.icon}
-                </div>
+                  transition-transform
+                  duration-300
+                "
+              >
+                {feature.icon}
+              </div>
 
-
-
-
-
-                <h3
-                  className="
+              <h3
+                className="
                   mt-7
                   text-2xl
                   font-bold
                   text-slate-900
-                  "
-                >
-                  {feature.title}
-                </h3>
+                "
+              >
+                {feature.title}
+              </h3>
 
-
-
-
-
-                <p
-                  className="
+              <p
+                className="
                   mt-3
                   text-slate-600
                   leading-7
-                  "
-                >
-                  {feature.description}
-                </p>
-
-
-
-              </div>
-
-            ))
-          }
-
-
+                "
+              >
+                {feature.description}
+              </p>
+            </div>
+          ))}
         </div>
-
-
       </div>
-
-
     </section>
   );
 }

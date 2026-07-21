@@ -27,7 +27,7 @@ export default function AboutPage() {
     {
       title: "Accessible Everywhere",
       description:
-        "Use ToolVerse anytime from desktop, tablet or mobile devices.",
+        "Use Soupxor anytime from desktop, tablet or mobile devices.",
       icon: <FiGlobe />,
     },
 
@@ -90,7 +90,7 @@ export default function AboutPage() {
             text-sm
             "
           >
-            About ToolVerse
+            About Soupxor
           </span>
 
 
@@ -135,7 +135,7 @@ export default function AboutPage() {
             "
           >
 
-            ToolVerse is a modern platform providing free online tools
+            Soupxor is a modern platform providing free online tools
             that help students, developers, creators and professionals
             complete everyday tasks faster.
 
@@ -191,7 +191,7 @@ export default function AboutPage() {
             utilities that anyone can use without complicated software
             installations or unnecessary registrations.
 
-            ToolVerse focuses on providing a clean experience where users
+            Soupxor focuses on providing a clean experience where users
             can complete tasks quickly while keeping their privacy protected.
 
           </p>

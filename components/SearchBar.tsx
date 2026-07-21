@@ -105,7 +105,7 @@ export default function SearchBar() {
           <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/80 px-4 py-2 shadow-sm backdrop-blur">
             <FiGrid className="text-indigo-600" />
             <span className="text-xs font-bold uppercase tracking-[0.25em] text-indigo-600">
-              ToolVerse Search
+              Soupxor Search
             </span>
           </div>
 
@@ -114,8 +114,9 @@ export default function SearchBar() {
           </h2>
 
           <p className="mt-5 max-w-2xl mx-auto text-lg text-slate-600 leading-8">
-            Search instantly through our premium collection of free online
-            tools. Fast, clean and designed for productivity.
+            Search instantly through Soupxor&apos;s growing collection of free
+            online tools for PDF, image, text, developer and productivity
+            tasks. Fast, secure and privacy-friendly.
           </p>
         </div>
 
@@ -182,14 +183,14 @@ export default function SearchBar() {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2 text-indigo-600 font-semibold transition group-hover:translate-x-1">
+                  <div className="flex items-center gap-2 font-semibold text-indigo-600 transition group-hover:translate-x-1">
                     Open
                     <FiArrowRight />
                   </div>
                 </Link>
               ))
             ) : (
-              <div className="py-16 px-6 text-center">
+              <div className="px-6 py-16 text-center">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-100">
                   <FiSearch className="text-2xl text-indigo-600" />
                 </div>

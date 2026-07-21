@@ -13,7 +13,6 @@ export default function Home() {
       <Navbar />
 
       <main className="min-h-screen bg-gray-50">
-
         <Hero />
 
         <SearchBar />
@@ -25,7 +24,6 @@ export default function Home() {
         <ToolsGrid />
 
         <WhyChooseUs />
-
       </main>
 
       <Footer />

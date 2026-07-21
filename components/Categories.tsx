@@ -7,151 +7,133 @@ import {
   FaCode,
 } from "react-icons/fa";
 
-
 export default function Categories() {
-
   const categories = [
     {
       title: "Text Tools",
       description:
-        "Word Counter, Character Counter and writing productivity tools.",
+        "Word Counter, Character Counter and professional writing tools from Soupxor.",
       icon: <FaFont />,
     },
     {
       title: "Image Tools",
       description:
-        "Compress, resize and convert images easily online.",
+        "Compress, resize and convert images instantly without installing software.",
       icon: <FaImage />,
     },
     {
       title: "PDF Tools",
       description:
-        "Merge, split and manage PDF files quickly.",
+        "Merge, split and organize PDF documents securely in your browser.",
       icon: <FaFilePdf />,
     },
     {
       title: "Calculators",
       description:
-        "Age, BMI, Loan and Percentage calculators.",
+        "Age, BMI, Percentage, Loan and everyday calculation utilities.",
       icon: <FaCalculator />,
     },
     {
       title: "Security Tools",
       description:
-        "Password generators and security utilities.",
+        "Generate strong passwords and use privacy-focused security utilities.",
       icon: <FaLock />,
     },
     {
       title: "Developer Tools",
       description:
-        "JSON formatter and developer productivity utilities.",
+        "JSON Formatter and developer productivity tools for modern workflows.",
       icon: <FaCode />,
     },
   ];
 
-
-
   return (
     <section
       className="
-      relative
-      py-24
-      overflow-hidden
+        relative
+        py-24
+        overflow-hidden
       "
     >
-
       <div
         className="
-        absolute
-        inset-0
-        -z-10
-        bg-gradient-to-b
-        from-indigo-50/70
-        via-white
-        to-white
+          absolute
+          inset-0
+          -z-10
+          bg-gradient-to-b
+          from-indigo-50/70
+          via-white
+          to-white
         "
       />
 
-
       <div
         className="
-        max-w-7xl
-        mx-auto
-        px-6
+          max-w-7xl
+          mx-auto
+          px-6
         "
       >
-
-
         {/* Header */}
         <div
           className="
-          text-center
-          mb-16
+            text-center
+            mb-16
           "
         >
-
           <span
             className="
-            text-indigo-600
-            font-semibold
-            uppercase
-            tracking-[0.2em]
-            text-sm
+              text-indigo-600
+              font-semibold
+              uppercase
+              tracking-[0.2em]
+              text-sm
             "
           >
             Categories
           </span>
 
-
           <h2
             className="
-            mt-4
-            text-4xl
-            md:text-5xl
-            font-extrabold
-            text-slate-900
+              mt-4
+              text-4xl
+              md:text-5xl
+              font-extrabold
+              text-slate-900
             "
           >
-            Browse Tool Categories
+            Explore Tools by Category
           </h2>
-
 
           <p
             className="
-            mt-5
-            max-w-2xl
-            mx-auto
-            text-lg
-            text-slate-600
+              mt-5
+              max-w-2xl
+              mx-auto
+              text-lg
+              text-slate-600
             "
           >
-            Discover powerful online utilities designed to make your
-            everyday tasks faster and easier.
+            Soupxor brings together fast, privacy-friendly online tools for
+            writing, PDFs, images, development, security and everyday
+            productivity—all in one place.
           </p>
-
         </div>
-
-
-
-
 
         {/* Cards */}
         <div
           className="
-          grid
-          grid-cols-1
-          md:grid-cols-2
-          lg:grid-cols-3
-          gap-8
+            grid
+            grid-cols-1
+            md:grid-cols-2
+            lg:grid-cols-3
+            gap-8
           "
         >
-
-          {
-            categories.map((item) => (
-
-              <div
-                key={item.title}
-                className="
+          {categories.map((item) => (
+            <div
+              key={item.title}
+              className="
                 group
                 glass
                 rounded-3xl
@@ -159,14 +141,13 @@ export default function Categories() {
                 shadow-soft
                 hover:shadow-hover
                 hover:-translate-y-2
-                transition
-                "
-              >
-
-
-                {/* Icon */}
-                <div
-                  className="
+                transition-all
+                duration-300
+              "
+            >
+              {/* Icon */}
+              <div
+                className="
                   w-16
                   h-16
                   rounded-2xl
@@ -180,72 +161,53 @@ export default function Categories() {
                   to-purple-600
                   shadow-md
                   group-hover:scale-110
-                  transition
-                  "
-                >
-                  {item.icon}
-                </div>
+                  transition-transform
+                  duration-300
+                "
+              >
+                {item.icon}
+              </div>
 
-
-
-
-
-                <h3
-                  className="
+              <h3
+                className="
                   mt-7
                   text-2xl
                   font-bold
                   text-slate-900
-                  "
-                >
-                  {item.title}
-                </h3>
+                "
+              >
+                {item.title}
+              </h3>
 
-
-
-                <p
-                  className="
+              <p
+                className="
                   mt-3
                   leading-7
                   text-slate-600
-                  "
-                >
-                  {item.description}
-                </p>
+                "
+              >
+                {item.description}
+              </p>
 
-
-
-
-
-                <div
-                  className="
+              <div
+                className="
                   mt-6
-                  text-indigo-600
-                  font-semibold
-                  flex
+                  inline-flex
                   items-center
                   gap-2
+                  text-indigo-600
+                  font-semibold
                   group-hover:gap-3
                   transition-all
-                  "
-                >
-                  Explore Tools
-                  <span>→</span>
-                </div>
-
-
+                "
+              >
+                Explore Tools
+                <span>→</span>
               </div>
-
-            ))
-          }
-
-
+            </div>
+          ))}
         </div>
-
-
       </div>
-
-
     </section>
   );
 }

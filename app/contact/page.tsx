@@ -5,13 +5,13 @@ export default function ContactPage() {
       <section className="max-w-6xl mx-auto px-6 pt-20 pb-14">
         <div className="text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-5 py-2 text-sm font-medium text-indigo-700 mb-6">
-            ToolVerse Support Center
+           Soupxor Support Center
           </div>
 
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900">
             Contact{" "}
             <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
-              ToolVerse
+              Soupxor
             </span>
           </h1>
 
@@ -96,7 +96,7 @@ export default function ContactPage() {
                 </p>
 
                 <p className="mt-1 text-lg font-semibold text-indigo-700">
-                  support@toolverse.com
+                  support@soupxor.com
                 </p>
               </div>
             </div>
