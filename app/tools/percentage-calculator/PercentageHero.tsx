@@ -90,7 +90,7 @@ export default function PercentageHero() {
       >
 
         Calculate percentages, increases, decreases, and discounts instantly.
-        A fast, accurate, and privacy-friendly calculator by ToolVerse.
+        A fast, accurate, and privacy-friendly calculator by  Soupxor.
 
       </p>
 

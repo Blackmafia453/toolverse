@@ -39,7 +39,7 @@ export default function ImageInfo() {
         max-w-3xl
         "
       >
-        ToolVerse Image Compressor helps you reduce image file size
+         Soupxor Image Compressor helps you reduce image file size
         quickly while keeping great visual quality. Images are processed
         directly in your browser, so your files stay private and secure.
       </p>

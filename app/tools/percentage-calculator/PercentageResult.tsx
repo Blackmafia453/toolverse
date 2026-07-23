@@ -116,7 +116,7 @@ export default function PercentageResult({
         "
       >
 
-        Calculated instantly by ToolVerse
+        Calculated instantly by  Soupxor
 
       </p>
 

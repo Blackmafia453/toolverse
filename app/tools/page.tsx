@@ -113,7 +113,7 @@ const tools = [
   },
   {
     name: "Color Picker",
-    description: "Pick colors and get HEX, RGB values.",
+    description: "Pick colors and get HEX and RGB values.",
     icon: FiDroplet,
     route: "/tools/color-picker",
   },
@@ -184,9 +184,7 @@ export default function ToolsPage() {
                 </p>
 
                 <div className="mt-6">
-                  <ToolButton href={tool.route}>
-                    Open Tool
-                  </ToolButton>
+                  <ToolButton href={tool.route} />
                 </div>
               </div>
             );

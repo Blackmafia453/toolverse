@@ -99,7 +99,7 @@ export default function PdfMerge() {
           </h2>
 
           <p className="leading-8 text-gray-600">
-            ToolVerse PDF Merge Tool allows you to combine multiple PDF files
+             Soupxor PDF Merge Tool allows you to combine multiple PDF files
             into one document quickly and securely. All processing happens
             directly in your browser without uploading files to any server.
           </p>

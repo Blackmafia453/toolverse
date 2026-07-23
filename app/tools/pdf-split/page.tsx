@@ -568,7 +568,7 @@ const blob = new Blob(
             text-gray-600
             leading-8
           ">
-            ToolVerse PDF Split Tool helps you extract selected pages
+             Soupxor PDF Split Tool helps you extract selected pages
             from PDF files quickly. All processing happens directly
             in your browser, keeping your documents private and secure.
           </p>

@@ -40,7 +40,7 @@ export default function QRCodeGeneratorPage() {
 
     link.href = url;
 
-    link.download = "toolverse-qrcode.png";
+    link.download = " Soupxor-qrcode.png";
 
     link.click();
 

@@ -99,7 +99,7 @@ export default function PercentageInfo() {
         "
       >
 
-        ToolVerse Percentage Calculator helps you solve common percentage
+         Soupxor Percentage Calculator helps you solve common percentage
         problems instantly. Calculate percentages, increases, decreases,
         and discounts directly in your browser without installing any software.
 

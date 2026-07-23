@@ -140,7 +140,7 @@ export default function ContactPage() {
           </h2>
 
           <p className="mt-4 text-indigo-100 max-w-2xl mx-auto leading-7">
-            ToolVerse is continuously improving with new utilities,
+             Soupxor is continuously improving with new utilities,
             performance updates, and user-driven features.
           </p>
 

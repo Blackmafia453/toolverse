@@ -26,7 +26,7 @@ export default function LoanInfo() {
         </h2>
 
         <p className="mt-4 leading-8 text-gray-500">
-          ToolVerse Loan Calculator helps you estimate your monthly loan
+           Soupxor Loan Calculator helps you estimate your monthly loan
           payments, total repayment amount, and total interest within
           seconds. Everything is calculated instantly in your browser with
           no registration or hidden fees.

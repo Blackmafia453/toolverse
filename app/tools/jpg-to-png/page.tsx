@@ -90,7 +90,7 @@ export default function JpgToPng() {
           <p className="mx-auto mt-4 max-w-2xl text-gray-600 text-lg">
 
             Convert JPG images into high quality PNG format instantly.
-            Fast, secure and completely free with ToolVerse.
+            Fast, secure and completely free with  Soupxor.
 
           </p>
 
@@ -324,7 +324,7 @@ export default function JpgToPng() {
 
         <p className="mt-10 text-center text-sm text-gray-500">
 
-          ToolVerse • Free Professional Online Tools
+           Soupxor • Free Professional Online Tools
 
         </p>
 
