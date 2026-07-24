@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import * as XLSX from "xlsx";
-import { GlobalWorkerOptions } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { FiDownload, FiFileText, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 
 import Hero from "@/components/finance/bank-statement-converter/Hero";
@@ -10,8 +9,6 @@ import UploadZone from "@/components/finance/bank-statement-converter/UploadZone
 import FileCard from "@/components/finance/bank-statement-converter/FileCard";
 import ProcessingLoader from "@/components/finance/bank-statement-converter/ProcessingLoader";
 
-GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.1.200/pdf.worker.min.mjs";
 
 type Transaction = {
   date: string;
@@ -21,189 +18,258 @@ type Transaction = {
   balance: string;
 };
 
-export default function BankStatementConverterPage() {
-  const [file, setFile] = useState<File | null>(null);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [completed, setCompleted] = useState(false);
 
-  const normalizeText = (text: string) => {
+
+export default function BankStatementConverterPage() {
+
+
+  const [file,setFile] = useState<File | null>(null);
+  const [transactions,setTransactions] = useState<Transaction[]>([]);
+  const [loading,setLoading] = useState(false);
+  const [error,setError] = useState("");
+  const [completed,setCompleted] = useState(false);
+
+
+
+  const normalizeText = (text:string)=>{
+
     return text
-      .replace(/\s+/g, " ")
-      .replace(/[|]/g, " ")
-      .trim();
+    .replace(/\s+/g," ")
+    .replace(/[|]/g," ")
+    .trim();
+
   };
 
 
-  const extractPDFText = async (pdfFile: File) => {
-    const buffer = await pdfFile.arrayBuffer();
-
-  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
-
-const pdf = await pdfjs.getDocument({
-  data: buffer,
-}).promise;
 
 
-    let fullText = "";
+  const extractPDFText = async(file:File)=>{
 
-    for (let i = 1; i <= pdf.numPages; i++) {
+
+    const buffer = await file.arrayBuffer();
+
+
+    const pdfjs = await import(
+      "pdfjs-dist/legacy/build/pdf.mjs"
+    );
+
+
+    const pdf = await pdfjs
+    .getDocument({
+      data:buffer
+    })
+    .promise;
+
+
+
+    let fullText="";
+
+
+    for(let i=1;i<=pdf.numPages;i++){
+
+
       const page = await pdf.getPage(i);
+
 
       const content = await page.getTextContent();
 
-      const pageText = content.items
-        .map((item: any) => item.str)
-        .join(" ");
 
-      fullText += pageText + "\n";
+      const text = content.items
+      .map((item:any)=>item.str)
+      .join(" ");
+
+
+      fullText += text + "\n";
+
     }
 
 
+
     return normalizeText(fullText);
+
+
   };
 
 
-  const parseTransactions = (text: string): Transaction[] => {
-
-    const lines = text.split(/\n|(?=\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/);
 
 
-    const results: Transaction[] = [];
+
+  const parseTransactions=(text:string):Transaction[]=>{
 
 
-    lines.forEach((line) => {
-
-      const numbers = line.match(
-        /[-+]?\d[\d,]*\.?\d*/g
-      );
+    const lines=text.split(
+      /\n|(?=\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/
+    );
 
 
-      if (!numbers || numbers.length < 2) {
-        return;
-      }
+    const results:Transaction[]=[];
 
 
-      const dateMatch = line.match(
+
+    lines.forEach((line)=>{
+
+
+      const dateMatch=line.match(
         /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/
       );
 
 
-      if (!dateMatch) {
-        return;
-      }
-
-
-      const date = dateMatch[0];
-
-
-      const cleanedNumbers = numbers.map((n) =>
-        n.replace(/,/g, "")
+      const numbers=line.match(
+        /[-+]?\d[\d,]*\.?\d*/g
       );
 
 
-      const lastNumbers =
-        cleanedNumbers.slice(-3);
+
+      if(!dateMatch || !numbers || numbers.length<2)
+      return;
 
 
-      let debit = "";
-      let credit = "";
-      let balance = "";
+
+      const cleaned=numbers.map(
+        n=>n.replace(/,/g,"")
+      );
 
 
-      if (lastNumbers.length === 3) {
 
-        debit = lastNumbers[0];
-        credit = lastNumbers[1];
-        balance = lastNumbers[2];
+      const last=cleaned.slice(-3);
 
-      } 
-      else if(lastNumbers.length === 2){
 
-        balance = lastNumbers[1];
 
-        if (
+      let debit="";
+      let credit="";
+      let balance="";
+
+
+
+      if(last.length===3){
+
+        debit=last[0];
+        credit=last[1];
+        balance=last[2];
+
+      }
+      else{
+
+        balance=last[1];
+
+
+        if(
           line.toLowerCase().includes("credit") ||
           line.toLowerCase().includes("deposit")
-        ) {
-          credit = lastNumbers[0];
-        } else {
-          debit = lastNumbers[0];
+        ){
+
+          credit=last[0];
+
+        }
+        else{
+
+          debit=last[0];
+
         }
 
       }
 
 
-      const description = line
-        .replace(date, "")
-        .replace(numbers.join(""), "")
-        .trim();
+
+
+      const description=line
+      .replace(dateMatch[0],"")
+      .replace(numbers.join(""),"")
+      .trim();
 
 
 
       results.push({
-        date,
+
+        date:dateMatch[0],
+
         description:
-          description || "Transaction",
+        description || "Transaction",
+
         debit,
+
         credit,
+
         balance,
+
       });
+
+
 
     });
 
 
+
     return results;
+
 
   };
 
 
 
-  const convertStatement = async () => {
-
-    if (!file) return;
 
 
-    try {
+
+
+  const convertStatement=async()=>{
+
+
+    if(!file)return;
+
+
+
+    try{
+
 
       setLoading(true);
       setError("");
       setCompleted(false);
 
 
-      const text = await extractPDFText(file);
+
+      const text =
+      await extractPDFText(file);
+
 
 
       const parsed =
-        parseTransactions(text);
+      parseTransactions(text);
 
 
-      if (!parsed.length) {
+
+      if(!parsed.length){
 
         throw new Error(
-          "No transactions found. Please upload a readable bank statement PDF."
+          "No transactions found. Upload a readable bank statement PDF."
         );
 
       }
 
 
+
+
       setTransactions(parsed);
 
 
-      const worksheet =
-        XLSX.utils.json_to_sheet(parsed);
+
+
+      const sheet =
+      XLSX.utils.json_to_sheet(parsed);
+
 
 
       const workbook =
-        XLSX.utils.book_new();
+      XLSX.utils.book_new();
+
 
 
       XLSX.utils.book_append_sheet(
         workbook,
-        worksheet,
+        sheet,
         "Transactions"
       );
+
+
 
 
       XLSX.writeFile(
@@ -212,44 +278,56 @@ const pdf = await pdfjs.getDocument({
       );
 
 
+
       setCompleted(true);
 
 
-    } catch(err:any){
+
+    }
+    catch(err:any){
+
 
       setError(
         err.message ||
-        "Something went wrong while converting your statement."
+        "Conversion failed."
       );
 
-    } finally {
+
+    }
+    finally{
 
       setLoading(false);
 
     }
 
+
   };
 
 
 
-  const handleDownloadAgain = () => {
-
-    if (!transactions.length) return;
 
 
-    const worksheet =
-      XLSX.utils.json_to_sheet(transactions);
+
+
+  const downloadAgain=()=>{
+
+
+    const sheet =
+    XLSX.utils.json_to_sheet(transactions);
+
 
 
     const workbook =
-      XLSX.utils.book_new();
+    XLSX.utils.book_new();
+
 
 
     XLSX.utils.book_append_sheet(
       workbook,
-      worksheet,
+      sheet,
       "Transactions"
     );
+
 
 
     XLSX.writeFile(
@@ -257,249 +335,351 @@ const pdf = await pdfjs.getDocument({
       "soupxor-bank-statement.xlsx"
     );
 
+
   };
 
 
 
-  return (
 
-    <main className="min-h-screen bg-gradient-to-b from-white via-indigo-50/40 to-white">
 
-      <Hero />
 
 
-      <section className="max-w-5xl mx-auto px-6 py-12">
+return (
 
+<main className="
+min-h-screen
+bg-gradient-to-b
+from-indigo-50
+via-white
+to-indigo-50
+text-slate-900
+">
 
-        <UploadZone
-          onFileSelect={(selectedFile:File)=>{
 
-            setFile(selectedFile);
-            setTransactions([]);
-            setCompleted(false);
-            setError("");
+<Hero />
 
-          }}
-        />
 
 
+<section className="
+mx-auto
+max-w-5xl
+px-6
+pb-20
+">
 
-        {file && (
 
-          <div className="mt-8">
+<UploadZone
 
-            <FileCard
-              file={file}
-              onRemove={()=>setFile(null)}
-            />
+onFileSelect={(selected)=>{
 
-          </div>
+setFile(selected);
+setTransactions([]);
+setCompleted(false);
+setError("");
 
-        )}
+}}
 
+/>
 
 
-        {file && !loading && (
 
-          <button
-            onClick={convertStatement}
-            className="
-            mt-8 w-full rounded-2xl
-            bg-indigo-600
-            hover:bg-indigo-700
-            text-white
-            py-4
-            font-semibold
-            shadow-lg
-            transition
-            "
-          >
 
-            Convert Bank Statement
 
-          </button>
+{
+file && (
 
-        )}
+<FileCard
 
+file={file}
 
+onRemove={()=>setFile(null)}
 
-        {loading && (
+/>
 
-          <div className="mt-10">
+)
 
-            <ProcessingLoader />
+}
 
-          </div>
 
-        )}
 
 
 
-        {error && (
+{
+file && !loading && (
 
-          <div
-          className="
-          mt-8
-          flex
-          items-center
-          gap-3
-          rounded-xl
-          border
-          border-red-200
-          bg-red-50
-          p-5
-          text-red-700
-          "
-          >
+<button
 
-            <FiAlertCircle />
+onClick={convertStatement}
 
-            {error}
+className="
+mt-8
+w-full
+rounded-2xl
+bg-gradient-to-r
+from-indigo-600
+to-violet-600
+py-4
+font-bold
+text-white
+shadow-xl
+shadow-indigo-500/30
+transition
+hover:scale-[1.01]
+"
 
-          </div>
+>
 
-        )}
+Convert Bank Statement
 
+</button>
 
+)
 
-        {completed && (
+}
 
-          <div
-          className="
-          mt-10
-          rounded-3xl
-          border
-          border-indigo-100
-          bg-white/70
-          backdrop-blur-xl
-          p-8
-          shadow-xl
-          "
-          >
 
-            <div className="flex items-center gap-3">
 
-              <FiCheckCircle
-              className="text-green-600"
-              size={24}
-              />
 
-              <h2
-              className="
-              text-xl
-              font-bold
-              "
-              >
-                Conversion Completed
-              </h2>
 
-            </div>
+{
+loading && (
 
+<ProcessingLoader />
 
+)
 
-            <p className="mt-3 text-gray-600">
+}
 
-              Your bank transactions have been extracted and converted into Excel format.
 
-            </p>
 
 
 
-            <button
-            onClick={handleDownloadAgain}
-            className="
-            mt-6
-            flex
-            items-center
-            justify-center
-            gap-2
-            rounded-xl
-            bg-indigo-600
-            px-6
-            py-3
-            text-white
-            font-semibold
-            "
-            >
 
-              <FiDownload />
+{
+error && (
 
-              Download Excel Again
+<div className="
+mt-8
+flex
+gap-3
+rounded-2xl
+border
+border-red-200
+bg-red-50
+p-5
+font-medium
+text-red-700
+">
 
-            </button>
 
+<FiAlertCircle size={22}/>
 
-          </div>
 
-        )}
+{error}
 
 
+</div>
 
-      </section>
+)
 
+}
 
 
 
-      <section className="max-w-5xl mx-auto px-6 pb-20 grid md:grid-cols-3 gap-6">
 
 
-        {[
-          {
-            title:"Universal PDF Support",
-            text:"Works with bank statements from different countries without bank-specific templates."
-          },
-          {
-            title:"Secure Processing",
-            text:"Files are processed locally inside your browser."
-          },
-          {
-            title:"Excel Ready",
-            text:"Export clean transaction data instantly."
-          }
-        ].map((item)=>(
 
-          <div
-          key={item.title}
-          className="
-          rounded-3xl
-          bg-white/70
-          backdrop-blur-xl
-          border
-          border-indigo-100
-          p-6
-          shadow-sm
-          "
-          >
 
-            <FiFileText
-            className="text-indigo-600 mb-4"
-            size={26}
-            />
 
-            <h3 className="font-bold text-lg">
+{
+completed && (
 
-              {item.title}
+<div className="
+mt-10
+rounded-3xl
+border
+border-indigo-100
+bg-white
+p-8
+shadow-xl
+">
 
-            </h3>
 
+<div className="
+flex
+items-center
+gap-3
+">
 
-            <p className="mt-2 text-gray-600 text-sm">
 
-              {item.text}
+<FiCheckCircle
+className="text-emerald-600"
+size={28}
+/>
 
-            </p>
 
+<h2 className="
+text-2xl
+font-bold
+text-slate-950
+">
 
-          </div>
+Conversion Completed
 
-        ))}
+</h2>
 
 
-      </section>
+</div>
 
 
-    </main>
 
-  );
+<p className="
+mt-4
+text-slate-600
+">
+
+Your bank transactions are ready in Excel format.
+
+</p>
+
+
+
+
+<button
+
+onClick={downloadAgain}
+
+className="
+mt-6
+flex
+items-center
+gap-2
+rounded-xl
+bg-indigo-600
+px-6
+py-3
+font-semibold
+text-white
+hover:bg-indigo-700
+"
+
+>
+
+<FiDownload/>
+
+Download Excel Again
+
+</button>
+
+
+
+</div>
+
+)
+
+}
+
+
+
+
+
+
+
+<div className="
+mt-16
+grid
+gap-6
+md:grid-cols-3
+">
+
+
+{
+[
+{
+title:"Universal PDF Support",
+text:"Works with different bank statement formats worldwide."
+},
+{
+title:"Secure Processing",
+text:"Your financial files stay inside your browser."
+},
+{
+title:"Excel Ready",
+text:"Export structured transactions instantly."
+}
+
+].map(item=>(
+
+
+<div
+key={item.title}
+className="
+rounded-3xl
+border
+border-indigo-100
+bg-white
+p-6
+shadow-lg
+"
+>
+
+
+<FiFileText
+className="
+mb-4
+text-indigo-600
+"
+size={28}
+/>
+
+
+
+<h3 className="
+text-lg
+font-bold
+text-slate-950
+">
+
+{item.title}
+
+</h3>
+
+
+
+<p className="
+mt-3
+text-sm
+leading-6
+text-slate-600
+">
+
+{item.text}
+
+</p>
+
+
+
+</div>
+
+
+))
+
+}
+
+
+
+</div>
+
+
+
+</section>
+
+
+
+</main>
+
+
+);
+
 
 }
