@@ -1,266 +1,435 @@
 "use client";
 
-import Image from "next/image";
-import {
-  FiUploadCloud,
-  FiFileText,
-  FiShield,
-  FiZap,
-  FiDownload,
-  FiCheckCircle,
-  FiGlobe,
-  FiCreditCard,
-} from "react-icons/fi";
+import { useState } from "react";
+import * as XLSX from "xlsx";
+import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
+import { FiDownload, FiFileText, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
+
+import Hero from "@/components/finance/bank-statement-converter/Hero";
+import UploadZone from "@/components/finance/bank-statement-converter/UploadZone";
+import FileCard from "@/components/finance/bank-statement-converter/FileCard";
+import ProcessingLoader from "@/components/finance/bank-statement-converter/ProcessingLoader";
+
+GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/6.1.200/pdf.worker.min.mjs`;
+
+type Transaction = {
+  date: string;
+  description: string;
+  debit: string;
+  credit: string;
+  balance: string;
+};
 
 export default function BankStatementConverterPage() {
- const banks = [
-  {
-    name: "Chase Bank",
-    logo: "/banks/chase.svg",
-    country: "USA",
-  },
-  {
-  name: "Bank of America",
-  logo: "/banks/bank-of-america.svg",
-  country: "USA",
-  },
-  {
-    name: "HSBC",
-    logo: "/banks/hsbc.svg",
-    country: "UK",
-  },
-  {
-    name: "Barclays",
-    logo: "/banks/barclays.svg",
-    country: "UK",
-  },
-  {
-    name: "HDFC Bank",
-    logo: "/banks/hdfc.svg",
-    country: "India",
-  },
-  {
-    name: "Meezan Bank",
-    logo: "/banks/meezan.svg",
-    country: "Pakistan",
-  },
-];
+  const [file, setFile] = useState<File | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [completed, setCompleted] = useState(false);
 
-  const features = [
-    {
-      icon: <FiZap />,
-      title: "Instant Conversion",
-      text: "Convert bank statements into organized Excel files within seconds.",
-    },
-    {
-      icon: <FiShield />,
-      title: "Privacy Focused",
-      text: "Your financial documents stay protected with secure processing.",
-    },
-    {
-      icon: <FiFileText />,
-      title: "Smart Formatting",
-      text: "Automatically organize dates, descriptions, deposits and withdrawals.",
-    },
-    {
-      icon: <FiDownload />,
-      title: "Excel Ready",
-      text: "Download clean spreadsheets ready for accounting and analysis.",
-    },
-  ];
+  const normalizeText = (text: string) => {
+    return text
+      .replace(/\s+/g, " ")
+      .replace(/[|]/g, " ")
+      .trim();
+  };
+
+
+  const extractPDFText = async (pdfFile: File) => {
+    const buffer = await pdfFile.arrayBuffer();
+
+    const pdf = await getDocument({
+      data: buffer,
+    }).promise;
+
+
+    let fullText = "";
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+
+      const content = await page.getTextContent();
+
+      const pageText = content.items
+        .map((item: any) => item.str)
+        .join(" ");
+
+      fullText += pageText + "\n";
+    }
+
+
+    return normalizeText(fullText);
+  };
+
+
+  const parseTransactions = (text: string): Transaction[] => {
+
+    const lines = text.split(/\n|(?=\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/);
+
+
+    const results: Transaction[] = [];
+
+
+    lines.forEach((line) => {
+
+      const numbers = line.match(
+        /[-+]?\d[\d,]*\.?\d*/g
+      );
+
+
+      if (!numbers || numbers.length < 2) {
+        return;
+      }
+
+
+      const dateMatch = line.match(
+        /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/
+      );
+
+
+      if (!dateMatch) {
+        return;
+      }
+
+
+      const date = dateMatch[0];
+
+
+      const cleanedNumbers = numbers.map((n) =>
+        n.replace(/,/g, "")
+      );
+
+
+      const lastNumbers =
+        cleanedNumbers.slice(-3);
+
+
+      let debit = "";
+      let credit = "";
+      let balance = "";
+
+
+      if (lastNumbers.length === 3) {
+
+        debit = lastNumbers[0];
+        credit = lastNumbers[1];
+        balance = lastNumbers[2];
+
+      } 
+      else if(lastNumbers.length === 2){
+
+        balance = lastNumbers[1];
+
+        if (
+          line.toLowerCase().includes("credit") ||
+          line.toLowerCase().includes("deposit")
+        ) {
+          credit = lastNumbers[0];
+        } else {
+          debit = lastNumbers[0];
+        }
+
+      }
+
+
+      const description = line
+        .replace(date, "")
+        .replace(numbers.join(""), "")
+        .trim();
+
+
+
+      results.push({
+        date,
+        description:
+          description || "Transaction",
+        debit,
+        credit,
+        balance,
+      });
+
+    });
+
+
+    return results;
+
+  };
+
+
+
+  const convertStatement = async () => {
+
+    if (!file) return;
+
+
+    try {
+
+      setLoading(true);
+      setError("");
+      setCompleted(false);
+
+
+      const text = await extractPDFText(file);
+
+
+      const parsed =
+        parseTransactions(text);
+
+
+      if (!parsed.length) {
+
+        throw new Error(
+          "No transactions found. Please upload a readable bank statement PDF."
+        );
+
+      }
+
+
+      setTransactions(parsed);
+
+
+      const worksheet =
+        XLSX.utils.json_to_sheet(parsed);
+
+
+      const workbook =
+        XLSX.utils.book_new();
+
+
+      XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Transactions"
+      );
+
+
+      XLSX.writeFile(
+        workbook,
+        `${file.name.replace(".pdf","")}-converted.xlsx`
+      );
+
+
+      setCompleted(true);
+
+
+    } catch(err:any){
+
+      setError(
+        err.message ||
+        "Something went wrong while converting your statement."
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+
+
+  const handleDownloadAgain = () => {
+
+    if (!transactions.length) return;
+
+
+    const worksheet =
+      XLSX.utils.json_to_sheet(transactions);
+
+
+    const workbook =
+      XLSX.utils.book_new();
+
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Transactions"
+    );
+
+
+    XLSX.writeFile(
+      workbook,
+      "soupxor-bank-statement.xlsx"
+    );
+
+  };
+
+
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-white px-4 py-12">
 
-      <section className="mx-auto max-w-6xl text-center">
+    <main className="min-h-screen bg-gradient-to-b from-white via-indigo-50/40 to-white">
 
-        <div className="inline-flex items-center gap-2 rounded-full border bg-white/70 px-5 py-2 text-sm text-indigo-600 shadow-sm backdrop-blur">
-          <FiCreditCard />
-          Finance Productivity Tool
-        </div>
+      <Hero />
 
 
-        <h1 className="mt-8 text-4xl font-bold tracking-tight text-gray-900 md:text-6xl">
-          Bank Statement Converter
-        </h1>
-
-        <p className="mx-auto mt-5 max-w-3xl text-lg leading-relaxed text-gray-600">
-          Convert your bank statements into clean Excel spreadsheets quickly.
-          Soupxor helps individuals, accountants, freelancers and businesses
-          organize financial data with a simple and secure workflow.
-        </p>
+      <section className="max-w-5xl mx-auto px-6 py-12">
 
 
-        <div className="mx-auto mt-10 max-w-3xl rounded-3xl border border-white/60 bg-white/70 p-8 shadow-xl backdrop-blur-xl">
+        <UploadZone
+          onFileSelect={(selectedFile:File)=>{
 
-          <div className="rounded-2xl border-2 border-dashed border-indigo-200 bg-indigo-50/50 p-10">
+            setFile(selectedFile);
+            setTransactions([]);
+            setCompleted(false);
+            setError("");
 
-            <FiUploadCloud className="mx-auto text-5xl text-indigo-600" />
+          }}
+        />
 
-            <h2 className="mt-5 text-2xl font-semibold text-gray-900">
-              Upload Your Bank Statement
-            </h2>
+
+
+        {file && (
+
+          <div className="mt-8">
+
+            <FileCard
+              file={file}
+              onRemove={()=>setFile(null)}
+            />
+
+          </div>
+
+        )}
+
+
+
+        {file && !loading && (
+
+          <button
+            onClick={convertStatement}
+            className="
+            mt-8 w-full rounded-2xl
+            bg-indigo-600
+            hover:bg-indigo-700
+            text-white
+            py-4
+            font-semibold
+            shadow-lg
+            transition
+            "
+          >
+
+            Convert Bank Statement
+
+          </button>
+
+        )}
+
+
+
+        {loading && (
+
+          <div className="mt-10">
+
+            <ProcessingLoader />
+
+          </div>
+
+        )}
+
+
+
+        {error && (
+
+          <div
+          className="
+          mt-8
+          flex
+          items-center
+          gap-3
+          rounded-xl
+          border
+          border-red-200
+          bg-red-50
+          p-5
+          text-red-700
+          "
+          >
+
+            <FiAlertCircle />
+
+            {error}
+
+          </div>
+
+        )}
+
+
+
+        {completed && (
+
+          <div
+          className="
+          mt-10
+          rounded-3xl
+          border
+          border-indigo-100
+          bg-white/70
+          backdrop-blur-xl
+          p-8
+          shadow-xl
+          "
+          >
+
+            <div className="flex items-center gap-3">
+
+              <FiCheckCircle
+              className="text-green-600"
+              size={24}
+              />
+
+              <h2
+              className="
+              text-xl
+              font-bold
+              "
+              >
+                Conversion Completed
+              </h2>
+
+            </div>
+
+
 
             <p className="mt-3 text-gray-600">
-              Upload PDF, CSV or supported bank statement files.
+
+              Your bank transactions have been extracted and converted into Excel format.
+
             </p>
 
 
-            <button className="mt-7 rounded-xl bg-indigo-600 px-8 py-3 font-semibold text-white shadow-lg transition hover:bg-indigo-700">
-              Upload Statement
+
+            <button
+            onClick={handleDownloadAgain}
+            className="
+            mt-6
+            flex
+            items-center
+            justify-center
+            gap-2
+            rounded-xl
+            bg-indigo-600
+            px-6
+            py-3
+            text-white
+            font-semibold
+            "
+            >
+
+              <FiDownload />
+
+              Download Excel Again
+
             </button>
 
-          </div>
-
-        </div>
-
-      </section>
-
-
-
-      <section className="mx-auto mt-20 max-w-6xl">
-
-        <div className="mb-10 text-center">
-
-          <h2 className="text-3xl font-bold text-gray-900">
-            Supported Worldwide Banks
-          </h2>
-
-          <p className="mt-3 text-gray-600">
-            Designed for statements from popular banks around the world.
-          </p>
-
-        </div>
-
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-
-          {banks.map((bank) => (
-
-            <div
-              key={bank.name}
-              className="flex items-center gap-5 rounded-2xl border bg-white/70 p-6 shadow-sm backdrop-blur transition hover:-translate-y-1 hover:shadow-lg"
-            >
-
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gray-50">
-
-                <Image
-                  src={bank.logo}
-                  alt={`${bank.name} logo`}
-                  width={45}
-                  height={45}
-                  className="object-contain"
-                />
-
-              </div>
-
-
-              <div>
-
-                <h3 className="font-semibold text-gray-900">
-                  {bank.name}
-                </h3>
-
-                <p className="flex items-center gap-2 text-sm text-gray-500">
-                  <FiGlobe />
-                  {bank.country}
-                </p>
-
-              </div>
-
-
-            </div>
-
-          ))}
-
-        </div>
-
-      </section>
-
-
-
-
-      <section className="mx-auto mt-20 max-w-6xl">
-
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-
-          {features.map((feature)=>(
-            
-            <div
-              key={feature.title}
-              className="rounded-2xl border bg-white/70 p-6 shadow-sm backdrop-blur transition hover:shadow-lg"
-            >
-
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-2xl text-indigo-600">
-                {feature.icon}
-              </div>
-
-
-              <h3 className="mt-5 font-semibold text-gray-900">
-                {feature.title}
-              </h3>
-
-
-              <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                {feature.text}
-              </p>
-
-
-            </div>
-
-          ))}
-
-        </div>
-
-      </section>
-
-
-
-
-      <section className="mx-auto mt-20 max-w-5xl rounded-3xl border bg-white p-10 shadow-xl">
-
-        <h2 className="text-center text-3xl font-bold text-gray-900">
-          Why Use Soupxor Bank Statement Converter?
-        </h2>
-
-
-        <div className="mt-8 space-y-5 text-gray-600">
-
-          <p>
-            Managing financial records manually can take hours. Soupxor
-            simplifies the process by transforming complicated bank statements
-            into structured spreadsheet data.
-          </p>
-
-
-          <p>
-            Whether you are preparing accounting reports, analyzing expenses,
-            tracking business transactions or organizing personal finances,
-            this tool helps save valuable time.
-          </p>
-
-
-          <div className="grid gap-4 md:grid-cols-2">
-
-            {[
-              "Convert statements into spreadsheet format",
-              "Organize transaction history automatically",
-              "Useful for accountants and businesses",
-              "Works with multiple bank formats",
-            ].map((item)=>(
-              <div
-                key={item}
-                className="flex items-center gap-3 rounded-xl bg-indigo-50 p-4 text-sm text-gray-700"
-              >
-                <FiCheckCircle className="text-indigo-600" />
-                {item}
-              </div>
-            ))}
 
           </div>
 
+        )}
 
-        </div>
 
 
       </section>
@@ -268,21 +437,66 @@ export default function BankStatementConverterPage() {
 
 
 
-      <section className="mx-auto mt-20 max-w-4xl text-center">
+      <section className="max-w-5xl mx-auto px-6 pb-20 grid md:grid-cols-3 gap-6">
 
-        <h2 className="text-3xl font-bold text-gray-900">
-          Convert Your Bank Statement Today
-        </h2>
 
-        <p className="mt-4 text-gray-600">
-          Turn financial documents into useful data with Soupxor's free online
-          bank statement converter.
-        </p>
+        {[
+          {
+            title:"Universal PDF Support",
+            text:"Works with bank statements from different countries without bank-specific templates."
+          },
+          {
+            title:"Secure Processing",
+            text:"Files are processed locally inside your browser."
+          },
+          {
+            title:"Excel Ready",
+            text:"Export clean transaction data instantly."
+          }
+        ].map((item)=>(
+
+          <div
+          key={item.title}
+          className="
+          rounded-3xl
+          bg-white/70
+          backdrop-blur-xl
+          border
+          border-indigo-100
+          p-6
+          shadow-sm
+          "
+          >
+
+            <FiFileText
+            className="text-indigo-600 mb-4"
+            size={26}
+            />
+
+            <h3 className="font-bold text-lg">
+
+              {item.title}
+
+            </h3>
+
+
+            <p className="mt-2 text-gray-600 text-sm">
+
+              {item.text}
+
+            </p>
+
+
+          </div>
+
+        ))}
 
 
       </section>
 
 
     </main>
+
   );
+
 }
