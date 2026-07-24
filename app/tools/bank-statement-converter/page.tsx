@@ -43,49 +43,49 @@ export default function BankStatementConverterPage() {
 
 
 
-  const extractPDFText = async(file:File)=>{
+  const extractPDFText = async (file: File) => {
+
+  const buffer = await file.arrayBuffer();
+
+  const pdfjs = await import(
+    "pdfjs-dist/legacy/build/pdf.mjs"
+  );
 
 
-    const buffer = await file.arrayBuffer();
+  pdfjs.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.1.200/pdf.worker.min.mjs";
 
 
-    const pdfjs = await import(
-      "pdfjs-dist/legacy/build/pdf.mjs"
-    );
-
-
-    const pdf = await pdfjs
+  const pdf = await pdfjs
     .getDocument({
-      data:buffer
+      data: buffer,
     })
     .promise;
 
 
-
-    let fullText="";
-
-
-    for(let i=1;i<=pdf.numPages;i++){
+  let fullText = "";
 
 
-      const page = await pdf.getPage(i);
+  for (let i = 1; i <= pdf.numPages; i++) {
+
+    const page = await pdf.getPage(i);
+
+    const content = await page.getTextContent();
 
 
-      const content = await page.getTextContent();
-
-
-      const text = content.items
-      .map((item:any)=>item.str)
+    const text = content.items
+      .map((item: any) => item.str)
       .join(" ");
 
 
-      fullText += text + "\n";
+    fullText += text + "\n";
 
-    }
+  }
 
 
+  return normalizeText(fullText);
 
-    return normalizeText(fullText);
+ };
 
 
   };
