@@ -20,9 +20,9 @@ export default function BankStatementConverterPage() {
     country: "USA",
   },
   {
-    name: "Wells Fargo",
-    logo: "/banks/wells-fargo.svg",
-    country: "USA",
+  name: "Bank of America",
+  logo: "/banks/bank-of-america.svg",
+  country: "USA",
   },
   {
     name: "HSBC",
