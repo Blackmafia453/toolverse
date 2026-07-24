@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import * as XLSX from "xlsx";
-import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
+import { GlobalWorkerOptions } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { FiDownload, FiFileText, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 
 import Hero from "@/components/finance/bank-statement-converter/Hero";
@@ -10,7 +10,8 @@ import UploadZone from "@/components/finance/bank-statement-converter/UploadZone
 import FileCard from "@/components/finance/bank-statement-converter/FileCard";
 import ProcessingLoader from "@/components/finance/bank-statement-converter/ProcessingLoader";
 
-GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/6.1.200/pdf.worker.min.mjs`;
+GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/6.1.200/pdf.worker.min.mjs";
 
 type Transaction = {
   date: string;
@@ -38,9 +39,11 @@ export default function BankStatementConverterPage() {
   const extractPDFText = async (pdfFile: File) => {
     const buffer = await pdfFile.arrayBuffer();
 
-    const pdf = await getDocument({
-      data: buffer,
-    }).promise;
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+
+const pdf = await pdfjs.getDocument({
+  data: buffer,
+}).promise;
 
 
     let fullText = "";
