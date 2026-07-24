@@ -13,38 +13,38 @@ import {
 } from "react-icons/fi";
 
 export default function BankStatementConverterPage() {
-  const banks = [
-    {
-      name: "Chase Bank",
-      logo: "/banks/chase.svg",
-      country: "USA",
-    },
-    {
-      name: "HSBC",
-      logo: "/banks/hsbc.svg",
-      country: "UK",
-    },
-    {
-      name: "Barclays",
-      logo: "/banks/barclays.svg",
-      country: "UK",
-    },
-    {
-      name: "HDFC Bank",
-      logo: "/banks/hdfc.svg",
-      country: "India",
-    },
-    {
-      name: "Meezan Bank",
-      logo: "/banks/meezan.svg",
-      country: "Pakistan",
-    },
-    {
-      name: "DBS Bank",
-      logo: "/banks/dbs.svg",
-      country: "Singapore",
-    },
-  ];
+ const banks = [
+  {
+    name: "Chase Bank",
+    logo: "/banks/chase.svg",
+    country: "USA",
+  },
+  {
+    name: "Wells Fargo",
+    logo: "/banks/wells-fargo.svg",
+    country: "USA",
+  },
+  {
+    name: "HSBC",
+    logo: "/banks/hsbc.svg",
+    country: "UK",
+  },
+  {
+    name: "Barclays",
+    logo: "/banks/barclays.svg",
+    country: "UK",
+  },
+  {
+    name: "HDFC Bank",
+    logo: "/banks/hdfc.svg",
+    country: "India",
+  },
+  {
+    name: "Meezan Bank",
+    logo: "/banks/meezan.svg",
+    country: "Pakistan",
+  },
+];
 
   const features = [
     {
