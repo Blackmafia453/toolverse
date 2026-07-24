@@ -15,6 +15,7 @@ import {
   FiDroplet,
   FiMinimize2,
   FiScissors,
+  FiCreditCard,
 } from "react-icons/fi";
 
 
@@ -24,12 +25,22 @@ export default function ToolsGrid() {
 
   const allTools = [
 
+
+    {
+      name: "Bank Statement Converter",
+      category: "Finance",
+      icon: <FiCreditCard />,
+      link: "/tools/bank-statement-converter",
+    },
+
+
     {
       name: "Word Counter",
       category: "Text",
       icon: <FiFileText />,
       link: "/tools/word-counter",
     },
+
 
     {
       name: "Character Counter",
@@ -38,12 +49,14 @@ export default function ToolsGrid() {
       link: "/tools/character-counter",
     },
 
+
     {
       name: "Password Generator",
       category: "Security",
       icon: <FiShield />,
       link: "/tools/password-generator",
     },
+
 
     {
       name: "QR Code Generator",
@@ -52,12 +65,14 @@ export default function ToolsGrid() {
       link: "/tools/qr-code-generator",
     },
 
+
     {
       name: "Age Calculator",
       category: "Calculator",
       icon: <FiCalendar />,
       link: "/tools/age-calculator",
     },
+
 
     {
       name: "Percentage Calculator",
@@ -66,12 +81,14 @@ export default function ToolsGrid() {
       link: "/tools/percentage-calculator",
     },
 
+
     {
       name: "BMI Calculator",
       category: "Calculator",
       icon: <FiActivity />,
       link: "/tools/bmi-calculator",
     },
+
 
     {
       name: "Loan Calculator",
@@ -80,12 +97,14 @@ export default function ToolsGrid() {
       link: "/tools/loan-calculator",
     },
 
+
     {
       name: "Image Compressor",
       category: "Image",
       icon: <FiMinimize2 />,
       link: "/tools/image-compressor",
     },
+
 
     {
       name: "JPG to PNG",
@@ -94,12 +113,14 @@ export default function ToolsGrid() {
       link: "/tools/jpg-to-png",
     },
 
+
     {
       name: "PNG to JPG",
       category: "Image",
       icon: <FiImage />,
       link: "/tools/png-to-jpg",
     },
+
 
     {
       name: "PDF Merge",
@@ -108,12 +129,14 @@ export default function ToolsGrid() {
       link: "/tools/pdf-merge",
     },
 
+
     {
       name: "PDF Split",
       category: "PDF",
       icon: <FiScissors />,
       link: "/tools/pdf-split",
     },
+
 
     {
       name: "JSON Formatter",
@@ -122,12 +145,14 @@ export default function ToolsGrid() {
       link: "/tools/json-formatter",
     },
 
+
     {
       name: "Color Picker",
       category: "Design",
       icon: <FiDroplet />,
       link: "/tools/color-picker",
     },
+
 
   ];
 
@@ -235,8 +260,8 @@ export default function ToolsGrid() {
         >
 
 
-          {
-            allTools.map((tool) => (
+          {allTools.map((tool) => (
+
 
               <div
                 key={tool.name}
@@ -251,7 +276,6 @@ export default function ToolsGrid() {
                 transition
                 "
               >
-
 
 
 
@@ -349,8 +373,8 @@ export default function ToolsGrid() {
 
               </div>
 
-            ))
-          }
+
+          ))}
 
 
         </div>

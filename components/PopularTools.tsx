@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import {
   FaFileAlt,
   FaShieldAlt,
@@ -6,10 +7,22 @@ import {
   FaCalendarAlt,
   FaCompressArrowsAlt,
   FaFilePdf,
+  FaUniversity,
 } from "react-icons/fa";
 
+
 export default function PopularTools() {
+
   const tools = [
+
+    {
+      name: "Bank Statement Converter",
+      description:
+        "Convert PDF bank statements into Excel, CSV and JSON formats instantly with Soupxor.",
+      icon: <FaUniversity />,
+      link: "/tools/bank-statement-converter",
+    },
+
     {
       name: "Word Counter",
       description:
@@ -17,6 +30,7 @@ export default function PopularTools() {
       icon: <FaFileAlt />,
       link: "/tools/word-counter",
     },
+
     {
       name: "Password Generator",
       description:
@@ -24,6 +38,7 @@ export default function PopularTools() {
       icon: <FaShieldAlt />,
       link: "/tools/password-generator",
     },
+
     {
       name: "QR Code Generator",
       description:
@@ -31,6 +46,7 @@ export default function PopularTools() {
       icon: <FaQrcode />,
       link: "/tools/qr-code-generator",
     },
+
     {
       name: "Age Calculator",
       description:
@@ -38,6 +54,7 @@ export default function PopularTools() {
       icon: <FaCalendarAlt />,
       link: "/tools/age-calculator",
     },
+
     {
       name: "Image Compressor",
       description:
@@ -45,6 +62,7 @@ export default function PopularTools() {
       icon: <FaCompressArrowsAlt />,
       link: "/tools/image-compressor",
     },
+
     {
       name: "PDF Merge",
       description:
@@ -52,9 +70,12 @@ export default function PopularTools() {
       icon: <FaFilePdf />,
       link: "/tools/pdf-merge",
     },
+
   ];
 
+
   return (
+
     <section
       className="
         relative
@@ -62,6 +83,8 @@ export default function PopularTools() {
         overflow-hidden
       "
     >
+
+
       <div
         className="
           absolute
@@ -74,6 +97,8 @@ export default function PopularTools() {
         "
       />
 
+
+
       <div
         className="
           max-w-7xl
@@ -81,13 +106,17 @@ export default function PopularTools() {
           px-6
         "
       >
+
+
         {/* Heading */}
+
         <div
           className="
             text-center
             mb-16
           "
         >
+
           <span
             className="
               text-indigo-600
@@ -99,6 +128,8 @@ export default function PopularTools() {
           >
             Featured Tools
           </span>
+
+
 
           <h2
             className="
@@ -112,6 +143,8 @@ export default function PopularTools() {
             Most Popular Tools
           </h2>
 
+
+
           <p
             className="
               mt-5
@@ -121,13 +154,21 @@ export default function PopularTools() {
               text-slate-600
             "
           >
-            Discover the online tools trusted by thousands of users on
-            <span className="font-semibold text-slate-900"> Soupxor</span> to
-            boost productivity, simplify workflows and save time.
+            Discover powerful online tools trusted by users on
+            <span className="font-semibold text-slate-900">
+              {" "}Soupxor
+            </span>
+            {" "}to simplify workflows and boost productivity.
           </p>
+
+
         </div>
 
+
+
+
         {/* Cards */}
+
         <div
           className="
             grid
@@ -136,7 +177,10 @@ export default function PopularTools() {
             gap-8
           "
         >
+
+
           {tools.map((tool) => (
+
             <div
               key={tool.name}
               className="
@@ -151,7 +195,11 @@ export default function PopularTools() {
                 duration-300
               "
             >
+
+
+
               {/* Icon */}
+
               <div
                 className="
                   w-16
@@ -171,8 +219,14 @@ export default function PopularTools() {
                   duration-300
                 "
               >
+
                 {tool.icon}
+
               </div>
+
+
+
+
 
               <h3
                 className="
@@ -182,8 +236,13 @@ export default function PopularTools() {
                   text-slate-900
                 "
               >
+
                 {tool.name}
+
               </h3>
+
+
+
 
               <p
                 className="
@@ -192,8 +251,14 @@ export default function PopularTools() {
                   leading-7
                 "
               >
+
                 {tool.description}
+
               </p>
+
+
+
+
 
               <Link
                 href={tool.link}
@@ -216,13 +281,27 @@ export default function PopularTools() {
                   duration-300
                 "
               >
+
                 Open Tool
                 <span>→</span>
+
               </Link>
+
+
+
             </div>
+
           ))}
+
+
         </div>
+
+
       </div>
+
+
     </section>
+
   );
+
 }

@@ -11,6 +11,11 @@ import {
 
 const tools = [
   {
+    name: "Bank Statement Converter",
+    category: "Finance",
+    link: "/tools/bank-statement-converter",
+  },
+  {
     name: "Word Counter",
     category: "Text",
     link: "/tools/word-counter",
@@ -102,9 +107,12 @@ export default function SearchBar() {
       <div className="absolute inset-0 -z-20 bg-gradient-to-b from-white via-indigo-50/40 to-white" />
 
       <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl -z-10" />
+
       <div className="absolute bottom-10 right-10 h-80 w-80 rounded-full bg-purple-500/10 blur-3xl -z-10" />
 
+
       <div className="max-w-5xl mx-auto px-6">
+
 
         <div className="text-center mb-12">
 
@@ -126,11 +134,12 @@ export default function SearchBar() {
 
           <p className="mt-5 max-w-2xl mx-auto text-lg text-slate-600 leading-8">
             Search instantly through Soupxor&apos;s growing collection of free
-            online tools for PDF, image, text, developer and productivity
-            tasks. Fast, secure and privacy-friendly.
+            online tools for PDF, image, finance, text and productivity tasks.
+            Fast, secure and privacy-friendly.
           </p>
 
         </div>
+
 
 
         <div className="relative group">
@@ -149,7 +158,7 @@ export default function SearchBar() {
 
               <input
                 type="text"
-                placeholder="Search tools like PDF Merge, Word Counter..."
+                placeholder="Search tools like Bank Statement Converter..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="flex-1 bg-transparent px-5 py-6 text-lg text-slate-800 placeholder:text-slate-400 outline-none"
@@ -172,6 +181,7 @@ export default function SearchBar() {
         </div>
 
 
+
         <div className="mt-5 flex flex-wrap justify-center gap-3">
 
           <span className="rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-700">
@@ -188,9 +198,11 @@ export default function SearchBar() {
         </div>
 
 
+
         {search && (
 
           <div className="mt-8 overflow-hidden rounded-3xl border border-white/60 bg-white/80 backdrop-blur-xl shadow-2xl">
+
 
             {filteredTools.length > 0 ? (
 
@@ -208,6 +220,7 @@ export default function SearchBar() {
                       {tool.name}
                     </h3>
 
+
                     <p className="mt-1 text-sm text-slate-500">
                       {tool.category} Tool
                     </p>
@@ -219,6 +232,7 @@ export default function SearchBar() {
                     Open
                     <FiArrowRight />
                   </div>
+
 
                 </Link>
 
