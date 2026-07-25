@@ -5,16 +5,16 @@ import {
 } from "./utils";
 
 
+
 function normalizeDate(
-  date: string
-): string {
-
-  const clean =
-    date.replace(",", "").trim();
-
+  date:string
+):string {
 
   const parts =
-    clean.split(/[\/\-]/);
+    date
+      .replace(",", "")
+      .split(/[\/\-]/);
+
 
 
   if(parts.length === 3){
@@ -31,8 +31,7 @@ function normalizeDate(
 
     if(year.length === 2){
 
-      year =
-        "20" + year;
+      year = "20" + year;
 
     }
 
@@ -42,47 +41,7 @@ function normalizeDate(
   }
 
 
-  return clean;
-
-}
-
-
-
-
-
-function isNoiseLine(
-  line:string
-){
-
-  const value =
-    line.toLowerCase();
-
-
-
-  const noise = [
-
-    "previous balance",
-    "opening balance",
-    "closing balance",
-    "transactions continued",
-    "transaction summary",
-    "checks continued",
-    "interest charged",
-    "interest charge calculation",
-    "account reconciliation",
-    "payment information",
-    "annual percentage rate",
-    "total fees",
-    "total interest"
-
-  ];
-
-
-
-  return noise.some(
-    item =>
-      value.includes(item)
-  );
+  return date;
 
 }
 
@@ -99,7 +58,7 @@ function extractMoney(
 
   const matches =
     text.match(
-      /\$?\s?\d{1,3}(?:,\d{3})*(?:\.\d{2})?/g
+      /\$?\s?\d{1,3}(?:,\d{3})*(?:\.\d{2})/g
     );
 
 
@@ -107,13 +66,12 @@ function extractMoney(
     return [];
 
 
-
   return matches
 
     .map(
-      value =>
+      item =>
         Number(
-          value
+          item
           .replace("$","")
           .replace(/\s/g,"")
           .replace(/,/g,"")
@@ -121,8 +79,8 @@ function extractMoney(
     )
 
     .filter(
-      value =>
-        !isNaN(value)
+      n =>
+        !isNaN(n)
     );
 
 }
@@ -133,9 +91,71 @@ function extractMoney(
 
 
 
-function detectType(
+function shouldIgnore(
   line:string
-):"debit"|"credit"|null{
+):boolean {
+
+
+  const text =
+    line.toLowerCase();
+
+
+
+  const ignoreWords = [
+
+    "ending balance",
+
+    "previous balance",
+
+    "opening balance",
+
+    "transaction date",
+
+    "date description",
+
+    "debits credits balance",
+
+    "page of",
+
+    "account number",
+
+    "fee summary",
+
+    "interest charged",
+
+    "interest charge",
+
+    "account reconciliation",
+
+    "payment information",
+
+    "loan payment",
+
+    "charged this period",
+
+    "annual percentage rate",
+
+  ];
+
+
+
+  return ignoreWords.some(
+    word =>
+      text.includes(word)
+  );
+
+}
+
+
+
+
+
+
+
+
+function getType(
+  line:string
+):"credit"|"debit"|null {
 
 
   const text =
@@ -145,8 +165,7 @@ function detectType(
 
   if(
     text.includes("deposit") ||
-    text.includes("credit") ||
-    text.includes("interest paid")
+    text.includes("credit")
   ){
 
     return "credit";
@@ -158,10 +177,10 @@ function detectType(
 
   if(
     text.includes("debit") ||
-    text.includes("withdraw") ||
+    text.includes("ach") ||
     text.includes("charge") ||
     text.includes("fee") ||
-    text.includes("ach")
+    text.includes("withdraw")
   ){
 
     return "debit";
@@ -180,89 +199,31 @@ function detectType(
 
 
 
-function cleanDescription(
-  line:string,
-  amounts:number[]
-){
 
-  let result =
-    line;
-
-
-
-  amounts.forEach(
-    amount=>{
-
-      result =
-        result.replace(
-          amount.toString(),
-          ""
-        );
-
-    }
-  );
-
-
-
-  return result
-
-    .replace(/\$/g,"")
-
-    .replace(/\s+/g," ")
-
-    .trim();
-
-}
-
-
-
-
-
-
-
-function buildTransaction(
+function createTransaction(
   date:string,
   lines:string[]
 ):Transaction|null {
 
 
-  const fullLine =
+  const full =
     lines.join(" ");
 
 
 
   if(
-    isNoiseLine(fullLine)
+    shouldIgnore(full)
   ){
 
     return null;
 
   }
 
-
-
-
-  const amounts =
-    extractMoney(
-      fullLine
-    );
-
-
-
-  if(
-    amounts.length === 0
-  ){
-
-    return null;
-
-  }
 
 
 
   const type =
-    detectType(
-      fullLine
-    );
+    getType(full);
 
 
 
@@ -272,20 +233,35 @@ function buildTransaction(
 
 
 
-  let debit:number|null = null;
+  const amounts =
+    extractMoney(full);
 
-  let credit:number|null = null;
+
+
+  if(!amounts.length)
+    return null;
+
+
 
 
   let balance:number|null = null;
+
+  let amount:number|null = null;
 
 
 
 
   /**
-   * Usually:
-   * amount + balance
+   * Bank statement pattern:
+   *
+   * Deposit:
+   * Description Credit Balance
+   *
+   * Debit:
+   * Description Debit Balance
    */
+
+
 
   if(
     amounts.length >= 2
@@ -298,41 +274,15 @@ function buildTransaction(
 
 
 
-    const amount =
-      amounts[
-        amounts.length - 2
-      ];
-
-
-
-    if(type==="credit"){
-
-      credit = amount;
-
-    }
-    else{
-
-      debit = amount;
-
-    }
+    amount =
+      amounts[0];
 
   }
 
   else {
 
-
-    if(type==="credit"){
-
-      credit =
-        amounts[0];
-
-    }
-    else{
-
-      debit =
-        amounts[0];
-
-    }
+    amount =
+      amounts[0];
 
   }
 
@@ -341,11 +291,57 @@ function buildTransaction(
 
 
 
-  const description =
-    cleanDescription(
-      fullLine,
-      amounts
-    );
+
+  let debit:number|null = null;
+
+  let credit:number|null = null;
+
+
+
+  if(type === "credit"){
+
+    credit = amount;
+
+  }
+  else{
+
+    debit = amount;
+
+  }
+
+
+
+
+
+
+
+  let description =
+    full;
+
+
+
+  amounts.forEach(
+    value => {
+
+      description =
+        description.replace(
+          value.toString(),
+          ""
+        );
+
+    }
+  );
+
+
+
+  description =
+    description
+
+    .replace(/\$/g,"")
+
+    .replace(/\s+/g," ")
+
+    .trim();
 
 
 
@@ -355,9 +351,12 @@ function buildTransaction(
     description.length < 3
   ){
 
-    return null;
+    description =
+      "Transaction";
 
   }
+
+
 
 
 
@@ -375,13 +374,14 @@ function buildTransaction(
     balance,
 
     transactionType:
-      type==="credit"
+      type === "credit"
       ? "Credit"
       : "Debit"
 
   };
 
 }
+
 
 
 
@@ -410,6 +410,7 @@ export function parseTransactions(
 
 
 
+
   const transactions:
     Transaction[] = [];
 
@@ -428,34 +429,26 @@ export function parseTransactions(
   function process(){
 
     if(
-      !currentDate ||
-      !buffer.length
+      currentDate &&
+      buffer.length
     ){
 
-      buffer=[];
-
-      return;
-
-    }
-
-
-
-    const transaction =
-      buildTransaction(
-        currentDate,
-        buffer
-      );
+      const transaction =
+        createTransaction(
+          currentDate,
+          buffer
+        );
 
 
+      if(transaction){
 
-    if(transaction){
+        transactions.push(
+          transaction
+        );
 
-      transactions.push(
-        transaction
-      );
+      }
 
     }
-
 
 
     buffer=[];
@@ -468,17 +461,16 @@ export function parseTransactions(
 
 
 
+
   for(
     const line of lines
   ){
-
 
 
     const date =
       extractDate(
         line
       );
-
 
 
 
@@ -499,20 +491,16 @@ export function parseTransactions(
       buffer.push(
 
         line
-
         .replace(
           date,
           ""
         )
-
         .trim()
 
       );
 
 
-
     }
-
     else if(
       currentDate
     ){
@@ -531,6 +519,7 @@ export function parseTransactions(
 
 
   process();
+
 
 
 
