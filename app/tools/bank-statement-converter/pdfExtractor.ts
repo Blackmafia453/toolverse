@@ -66,6 +66,7 @@ function normalizeItems(
 
 
 
+
 function sortItems(
   items: PositionedText[]
 ) {
@@ -81,16 +82,20 @@ function sortItems(
     if(
       Math.abs(yDiff) > 5
     ){
+
       return yDiff;
+
     }
 
 
     return a.x - b.x;
 
+
   });
 
 
 }
+
 
 
 
@@ -127,6 +132,7 @@ function buildTableLines(
 
 
 
+
     if(
       Math.abs(
         currentY - item.y
@@ -135,6 +141,7 @@ function buildTableLines(
 
 
       if(row.length){
+
 
         row.sort(
           (a,b)=>a.x-b.x
@@ -148,6 +155,7 @@ function buildTableLines(
           )
           .join(" ")
         );
+
 
       }
 
@@ -170,6 +178,8 @@ function buildTableLines(
 
 
 
+
+
   if(row.length){
 
 
@@ -186,11 +196,14 @@ function buildTableLines(
       .join(" ")
     );
 
+
   }
 
 
 
+
   return lines;
+
 
 }
 
@@ -227,6 +240,7 @@ function cleanExtractedText(
 
 
 }
+
 
 
 
@@ -353,6 +367,17 @@ export async function extractPDFText(
    cleanExtractedText(
      pages.join("\n\n")
    );
+
+
+
+
+
+ // DEBUG RAW PDF OUTPUT
+ console.log(
+   "FINAL PDF TEXT:",
+   finalText
+ );
+
 
 
 
