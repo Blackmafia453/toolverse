@@ -1,538 +1,283 @@
-import { Transaction, ParseResult } from "./types";
-import {
-  extractDate,
-  removeDuplicateTransactions,
-} from "./utils";
-
-
-
-function normalizeDate(
-  date:string
-):string {
-
-  const parts =
-    date
-      .replace(",", "")
-      .split(/[\/\-]/);
-
-
-
-  if(parts.length === 3){
-
-    let month =
-      parts[0].padStart(2,"0");
-
-    let day =
-      parts[1].padStart(2,"0");
-
-    let year =
-      parts[2];
-
-
-    if(year.length === 2){
-
-      year = "20" + year;
-
-    }
-
-
-    return `${year}-${month}-${day}`;
-
-  }
-
-
-  return date;
-
-}
-
-
-
-
-
-
-
-function extractMoney(
-  text:string
-):number[] {
-
-
-  const matches =
-    text.match(
-      /\$?\s?\d{1,3}(?:,\d{3})*(?:\.\d{2})/g
-    );
-
-
-  if(!matches)
-    return [];
-
-
-  return matches
-
-    .map(
-      item =>
-        Number(
-          item
-          .replace("$","")
-          .replace(/\s/g,"")
-          .replace(/,/g,"")
-        )
-    )
-
-    .filter(
-      n =>
-        !isNaN(n)
-    );
-
-}
-
-
-
-
-
-
-
-function shouldIgnore(
-  line:string
-):boolean {
-
-
-  const text =
-    line.toLowerCase();
-
-
-
-  const ignoreWords = [
-
-    "ending balance",
-
-    "previous balance",
-
-    "opening balance",
-
-    "transaction date",
-
-    "date description",
-
-    "debits credits balance",
-
-    "page of",
-
-    "account number",
-
-    "fee summary",
-
-    "interest charged",
-
-    "interest charge",
-
-    "account reconciliation",
-
-    "payment information",
-
-    "loan payment",
-
-    "charged this period",
-
-    "annual percentage rate",
-
-  ];
-
-
-
-  return ignoreWords.some(
-    word =>
-      text.includes(word)
-  );
-
-}
-
-
-
-
-
-
-
-
-function getType(
-  line:string
-):"credit"|"debit"|null {
-
-
-  const text =
-    line.toLowerCase();
-
-
-
-  if(
-    text.includes("deposit") ||
-    text.includes("credit")
-  ){
-
-    return "credit";
-
-  }
-
-
-
-
-  if(
-    text.includes("debit") ||
-    text.includes("ach") ||
-    text.includes("charge") ||
-    text.includes("fee") ||
-    text.includes("withdraw")
-  ){
-
-    return "debit";
-
-  }
-
-
-
-  return null;
-
-}
-
-
-
-
-
-
-
-
-function createTransaction(
-  date:string,
-  lines:string[]
-):Transaction|null {
-
-
-  const full =
-    lines.join(" ");
-
-
-
-  if(
-    shouldIgnore(full)
-  ){
-
-    return null;
-
-  }
-
-
-
-
-  const type =
-    getType(full);
-
-
-
-  if(!type)
-    return null;
-
-
-
-
-  const amounts =
-    extractMoney(full);
-
-
-
-  if(!amounts.length)
-    return null;
-
-
-
-
-  let balance:number|null = null;
-
-  let amount:number|null = null;
-
-
-
-
-  /**
-   * Bank statement pattern:
-   *
-   * Deposit:
-   * Description Credit Balance
-   *
-   * Debit:
-   * Description Debit Balance
-   */
-
-
-
-  if(
-    amounts.length >= 2
-  ){
-
-    balance =
-      amounts[
-        amounts.length - 1
-      ];
-
-
-
-    amount =
-      amounts[0];
-
-  }
-
-  else {
-
-    amount =
-      amounts[0];
-
-  }
-
-
-
-
-
-
-
-  let debit:number|null = null;
-
-  let credit:number|null = null;
-
-
-
-  if(type === "credit"){
-
-    credit = amount;
-
-  }
-  else{
-
-    debit = amount;
-
-  }
-
-
-
-
-
-
-
-  let description =
-    full;
-
-
-
-  amounts.forEach(
-    value => {
-
-      description =
-        description.replace(
-          value.toString(),
-          ""
-        );
-
-    }
-  );
-
-
-
-  description =
-    description
-
-    .replace(/\$/g,"")
-
-    .replace(/\s+/g," ")
-
+import { ParsedTransaction, ParseResult } from "./types";
+import { cleanNumber, normalizeDate } from "./utils";
+
+function isAmount(value: string) {
+  if (!value) return false;
+
+  const cleaned = value
+    .replace(/,/g, "")
+    .replace(/[()]/g, "")
     .trim();
 
+  return /^\d+(\.\d{1,2})?$/.test(cleaned);
+}
 
+function extractAmounts(text: string): string[] {
+  const matches = text.match(
+    /(?:\(?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?\)?|\d+\.\d{1,2})/g
+  );
 
+  if (!matches) return [];
 
+  return matches
+    .map((x) =>
+      x
+        .replace(/[(),]/g, "")
+        .trim()
+    )
+    .filter(isAmount);
+}
 
-  if(
-    description.length < 3
-  ){
+function removeArtifacts(text: string) {
+  return text
+    .replace(/\bNBR\b/gi, "")
+    .replace(/\b131\b/g, "")
+    .replace(/page\s+\d+\s+of\s+\d+/gi, "")
+    .replace(/account\s*(number|no|#)?\s*[:\-]?\s*\d+/gi, "")
+    .replace(/statement\s*(period|date)?[\s\S]{0,40}/gi, "")
+    .replace(/opening\s+balance/gi, "")
+    .replace(/closing\s+balance/gi, "")
+    .replace(/generated\s+by[\s\S]*/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-    description =
-      "Transaction";
+function extractDate(text: string) {
+  const match = text.match(
+    /\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b|\b\d{1,2}\s+[A-Za-z]{3,9}\s+\d{4}\b/
+  );
 
+  return match ? normalizeDate(match[0]) : "";
+}
+
+function detectTransactionType(
+  amounts: string[],
+  line: string
+): "credit" | "debit" {
+  const lower = line.toLowerCase();
+
+  if (
+    lower.includes("cr") ||
+    lower.includes("credit") ||
+    lower.includes("deposit") ||
+    lower.includes("received") ||
+    lower.includes("salary")
+  ) {
+    return "credit";
   }
 
+  if (
+    lower.includes("dr") ||
+    lower.includes("debit") ||
+    lower.includes("withdraw") ||
+    lower.includes("payment") ||
+    lower.includes("purchase")
+  ) {
+    return "debit";
+  }
 
+  /*
+    Fallback:
+    Most bank statements keep debit/credit columns
+    before balance.
+  */
 
+  if (amounts.length >= 3) {
+    return "debit";
+  }
 
+  return "credit";
+}
 
+function extractDescription(
+  line: string,
+  date: string,
+  amounts: string[]
+) {
+  let description = line;
+
+  if (date) {
+    description = description.replace(date, "");
+  }
+
+  amounts.forEach((amount) => {
+    description = description.replace(amount, "");
+  });
+
+  return removeArtifacts(description);
+}
+
+function parseLine(line: string): ParsedTransaction | null {
+  const cleaned = removeArtifacts(line);
+
+  if (!cleaned) return null;
+
+  const date = extractDate(cleaned);
+
+  if (!date) return null;
+
+  const amounts = extractAmounts(cleaned);
+
+  if (!amounts.length) return null;
+
+  const type = detectTransactionType(amounts, cleaned);
+
+  let debit = 0;
+  let credit = 0;
+  let balance = 0;
+
+  const numbers = amounts.map((x) => Number(cleanNumber(x)));
+
+  if (numbers.length >= 2) {
+    balance = numbers[numbers.length - 1];
+  }
+
+  if (type === "credit") {
+    /*
+      Credit format:
+
+      Date Description Credit Balance
+
+      First amount = credit
+      Last amount = balance
+    */
+
+    credit = numbers[0] ?? 0;
+
+  } else {
+
+    /*
+      Debit format:
+
+      Date Description Debit Balance
+
+      Last amount = balance
+      Remaining amount = debit
+
+      If multiple amounts exist:
+      choose largest non-balance value.
+    */
+
+    const debitCandidates = numbers.slice(0, -1);
+
+    debit =
+      debitCandidates.length > 0
+        ? Math.max(...debitCandidates)
+        : 0;
+  }
+
+  const description = extractDescription(
+    cleaned,
+    date,
+    amounts
+  );
+
+  if (!description && !credit && !debit) {
+    return null;
+  }
 
   return {
-
     date,
-
     description,
-
     debit,
-
     credit,
-
     balance,
-
-    transactionType:
-      type === "credit"
-      ? "Credit"
-      : "Debit"
-
   };
-
 }
 
 
+function removeDuplicates(
+  transactions: ParsedTransaction[]
+) {
+  const seen = new Set<string>();
 
+  return transactions.filter((tx) => {
 
+    const key = [
+      tx.date,
+      tx.description,
+      tx.debit,
+      tx.credit,
+      tx.balance,
+    ].join("|");
 
+    if (seen.has(key)) {
+      return false;
+    }
 
+    seen.add(key);
 
+    return true;
+  });
+}
 
 
 export function parseTransactions(
-  text:string
-):ParseResult {
+  rawText: string
+): ParseResult {
 
-
-  let lines =
-    text
-
-    .split("\n")
-
-    .map(
-      line =>
-        line.trim()
-    )
-
+  const lines = rawText
+    .split(/\r?\n/)
+    .map((line) => removeArtifacts(line))
     .filter(Boolean);
 
 
+  const transactions: ParsedTransaction[] = [];
+
+  let pendingDescription = "";
 
 
+  for (const line of lines) {
 
-  const transactions:
-    Transaction[] = [];
-
-
+    const transaction = parseLine(line);
 
 
-  let currentDate = "";
+    if (transaction) {
 
-  let buffer:string[] = [];
+      if (pendingDescription) {
+        transaction.description =
+          `${pendingDescription} ${transaction.description}`
+            .trim();
 
-
-
-
-
-
-  function process(){
-
-    if(
-      currentDate &&
-      buffer.length
-    ){
-
-      const transaction =
-        createTransaction(
-          currentDate,
-          buffer
-        );
-
-
-      if(transaction){
-
-        transactions.push(
-          transaction
-        );
-
+        pendingDescription = "";
       }
 
+      transactions.push(transaction);
+
+    } else {
+
+      /*
+        Preserve multi-line descriptions.
+        Ignore obvious headers.
+      */
+
+      const ignored =
+        /date|description|balance|transaction|account|page|statement/i
+          .test(line);
+
+
+      if (!ignored) {
+        pendingDescription += " " + line;
+      }
     }
-
-
-    buffer=[];
-
   }
 
 
-
-
-
-
-
-
-  for(
-    const line of lines
-  ){
-
-
-    const date =
-      extractDate(
-        line
-      );
-
-
-
-    if(date){
-
-
-      process();
-
-
-
-      currentDate =
-        normalizeDate(
-          date
-        );
-
-
-
-      buffer.push(
-
-        line
-        .replace(
-          date,
-          ""
-        )
-        .trim()
-
-      );
-
-
-    }
-    else if(
-      currentDate
-    ){
-
-      buffer.push(
-        line
-      );
-
-    }
-
-
-  }
-
-
-
-
-
-  process();
-
-
-
-
+  const cleanedTransactions =
+    removeDuplicates(transactions);
 
 
   return {
+    success: cleanedTransactions.length > 0,
 
-    transactions:
+    transactions: cleanedTransactions,
 
-      removeDuplicateTransactions(
-        transactions
-      )
+    totalTransactions:
+      cleanedTransactions.length,
 
+    error:
+      cleanedTransactions.length
+        ? undefined
+        : "No transactions found",
   };
-
 }
