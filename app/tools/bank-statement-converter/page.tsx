@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import * as XLSX from "xlsx";
 import {
   FiDownload,
   FiFileText,
   FiCheckCircle,
   FiAlertCircle,
+  FiDatabase,
 } from "react-icons/fi";
 
 import Hero from "@/components/finance/bank-statement-converter/Hero";
@@ -14,250 +14,205 @@ import UploadZone from "@/components/finance/bank-statement-converter/UploadZone
 import FileCard from "@/components/finance/bank-statement-converter/FileCard";
 import ProcessingLoader from "@/components/finance/bank-statement-converter/ProcessingLoader";
 
-type Transaction = {
-  date: string;
-  description: string;
-  debit: string;
-  credit: string;
-  balance: string;
-};
+import { Transaction } from "./types";
+import { extractPDFText } from "./pdfExtractor";
+import {
+  extractTextWithOCR,
+} from "./ocr";
+import {
+  parseTransactions,
+} from "./parser";
+import {
+  generateExcel,
+} from "./excel";
+
 
 export default function BankStatementConverterPage() {
-  const [file, setFile] = useState<File | null>(null);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [completed, setCompleted] = useState(false);
 
-  const normalizeText = (text: string) => {
-    return text
-      .replace(/\s+/g, " ")
-      .replace(/[|]/g, " ")
-      .trim();
-  };
 
+  const [file, setFile] =
+    useState<File | null>(null);
 
-  const extractPDFText = async (file: File) => {
 
-    const buffer = await file.arrayBuffer();
+  const [transactions, setTransactions] =
+    useState<Transaction[]>([]);
 
 
-    const pdfjs = await import(
-      "pdfjs-dist/legacy/build/pdf.mjs"
-    );
+  const [loading, setLoading] =
+    useState(false);
 
 
-    if (!pdfjs.GlobalWorkerOptions.workerSrc) {
-      pdfjs.GlobalWorkerOptions.workerSrc =
-        `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
-    }
+  const [progressText, setProgressText] =
+    useState("");
 
 
-    const pdf = await pdfjs
-      .getDocument({
-        data: buffer,
-      })
-      .promise;
+  const [error, setError] =
+    useState("");
 
 
-    let fullText = "";
+  const [completed, setCompleted] =
+    useState(false);
 
 
-    for (let i = 1; i <= pdf.numPages; i++) {
 
-      const page = await pdf.getPage(i);
-
-      const content =
-        await page.getTextContent();
-
-
-      const text =
-        content.items
-          .map((item: any) => item.str)
-          .join(" ");
-
-
-      fullText += text + "\n";
-
-    }
-
-
-    return normalizeText(fullText);
-
-  };
-
-
-
-  const parseTransactions = (
-    text: string
-  ): Transaction[] => {
-
-
-    const lines = text.split(
-      /\n|(?=\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/
-    );
-
-
-    const results: Transaction[] = [];
-
-
-    lines.forEach((line) => {
-
-
-      const dateMatch =
-        line.match(
-          /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/
-        );
-
-
-      const numbers =
-        line.match(
-          /[-+]?\d[\d,]*\.?\d*/g
-        );
-
-
-      if (
-        !dateMatch ||
-        !numbers ||
-        numbers.length < 2
-      ) {
-        return;
-      }
-
-
-      const cleaned =
-        numbers.map(
-          (n) => n.replace(/,/g, "")
-        );
-
-
-      const last =
-        cleaned.slice(-3);
-
-
-      let debit = "";
-      let credit = "";
-      let balance = "";
-
-
-      if (last.length === 3) {
-
-        debit = last[0];
-        credit = last[1];
-        balance = last[2];
-
-      } else {
-
-        balance = last[1];
-
-
-        if (
-          line.toLowerCase().includes("credit") ||
-          line.toLowerCase().includes("deposit")
-        ) {
-
-          credit = last[0];
-
-        } else {
-
-          debit = last[0];
-
-        }
-
-      }
-
-
-      const description =
-        line
-          .replace(dateMatch[0], "")
-          .replace(numbers.join(""), "")
-          .trim();
-
-
-      results.push({
-
-        date: dateMatch[0],
-
-        description:
-          description || "Transaction",
-
-        debit,
-
-        credit,
-
-        balance,
-
-      });
-
-
-    });
-
-
-    return results;
-
-  };
-
-
-
+  /**
+   * Main conversion pipeline
+   */
   const convertStatement = async () => {
 
 
     if (!file) return;
 
 
+
     try {
 
+
       setLoading(true);
+
       setError("");
+
       setCompleted(false);
 
+      setTransactions([]);
 
-      const text =
-        await extractPDFText(file);
-
-
-      const parsed =
-        parseTransactions(text);
+      setProgressText(
+        "Reading PDF statement..."
+      );
 
 
-      if (!parsed.length) {
+
+      let extractedText = "";
+
+
+
+      /**
+       * First attempt:
+       * Normal PDF extraction
+       */
+      try {
+
+
+        const result =
+          await extractPDFText(
+            file
+          );
+
+
+        extractedText =
+          result.text || "";
+
+
+      } catch {
+
+        extractedText = "";
+
+      }
+
+
+
+      /**
+       * OCR fallback
+       */
+      if (
+        !extractedText ||
+        extractedText.length < 80
+      ) {
+
+
+        setProgressText(
+          "Scanning PDF pages with OCR..."
+        );
+
+
+
+        const ocrResult =
+          await extractTextWithOCR(
+            file,
+            (status) => {
+
+              setProgressText(
+                `${status.status}`
+              );
+
+            }
+          );
+
+
+
+        extractedText =
+          ocrResult.text;
+
+
+      }
+
+
+
+      if (
+        !extractedText ||
+        extractedText.length < 20
+      ) {
 
         throw new Error(
-          "No transactions found. Upload a readable bank statement PDF."
+          "Unable to extract text from this PDF."
         );
 
       }
 
 
-      setTransactions(parsed);
 
-
-
-      const sheet =
-        XLSX.utils.json_to_sheet(parsed);
-
-
-      const workbook =
-        XLSX.utils.book_new();
-
-
-      XLSX.utils.book_append_sheet(
-        workbook,
-        sheet,
-        "Transactions"
+      setProgressText(
+        "Detecting transactions..."
       );
 
 
-      XLSX.writeFile(
-        workbook,
-        `${file.name.replace(".pdf", "")}-converted.xlsx`
+
+      const parsed =
+        parseTransactions(
+          extractedText
+        );
+
+
+
+      if (!parsed.length) {
+
+        throw new Error(
+          "No transactions found in this statement."
+        );
+
+      }
+
+
+
+      setTransactions(
+        parsed
       );
+
+
+
+      setProgressText(
+        "Generating Excel file..."
+      );
+
+
+
+      generateExcel(
+        parsed,
+        {
+          fileName:
+            `${file.name.replace(
+              ".pdf",
+              ""
+            )}-converted.xlsx`,
+        }
+      );
+
 
 
       setCompleted(true);
 
 
-    } catch (err: any) {
+    } catch (err:any) {
 
 
       setError(
@@ -268,7 +223,10 @@ export default function BankStatementConverterPage() {
 
     } finally {
 
+
       setLoading(false);
+
+      setProgressText("");
 
     }
 
@@ -276,32 +234,25 @@ export default function BankStatementConverterPage() {
 
 
 
+
   const downloadAgain = () => {
 
 
-    const sheet =
-      XLSX.utils.json_to_sheet(
-        transactions
-      );
+    if (!transactions.length)
+      return;
 
 
-    const workbook =
-      XLSX.utils.book_new();
 
-
-    XLSX.utils.book_append_sheet(
-      workbook,
-      sheet,
-      "Transactions"
-    );
-
-
-    XLSX.writeFile(
-      workbook,
-      "soupxor-bank-statement.xlsx"
+    generateExcel(
+      transactions,
+      {
+        fileName:
+          "soupxor-bank-statement.xlsx",
+      }
     );
 
   };
+
 
 
 
@@ -318,7 +269,9 @@ export default function BankStatementConverterPage() {
       "
     >
 
+
       <Hero />
+
 
 
       <section
@@ -331,18 +284,24 @@ export default function BankStatementConverterPage() {
       >
 
 
+
         <UploadZone
 
-          onFileSelect={(selected) => {
+          onFileSelect={(selected)=>{
 
             setFile(selected);
+
             setTransactions([]);
+
             setCompleted(false);
+
             setError("");
 
           }}
 
         />
+
+
 
 
 
@@ -353,23 +312,36 @@ export default function BankStatementConverterPage() {
 
               file={file}
 
-              onRemove={() => setFile(null)}
+              onRemove={()=>{
+
+                setFile(null);
+
+                setTransactions([]);
+
+                setCompleted(false);
+
+              }}
 
             />
 
           )
-
         }
 
 
 
 
+
+
         {
-          file && !loading && (
+          file &&
+          !loading &&
+          (
 
             <button
 
-              onClick={convertStatement}
+              onClick={
+                convertStatement
+              }
 
               className="
               mt-8
@@ -394,26 +366,56 @@ export default function BankStatementConverterPage() {
             </button>
 
           )
-
         }
 
 
 
 
-        {
-          loading && (
 
-            <ProcessingLoader />
+
+        {
+          loading &&
+          (
+
+            <div>
+
+              <ProcessingLoader />
+
+              {
+                progressText &&
+                (
+
+                  <p
+                    className="
+                    mt-4
+                    text-center
+                    text-sm
+                    font-medium
+                    text-indigo-600
+                    "
+                  >
+
+                    {progressText}
+
+                  </p>
+
+                )
+              }
+
+            </div>
 
           )
-
         }
 
 
 
 
+
+
+
         {
-          error && (
+          error &&
+          (
 
             <div
               className="
@@ -444,8 +446,12 @@ export default function BankStatementConverterPage() {
 
 
 
+
+
+
         {
-          completed && (
+          completed &&
+          (
 
             <div
               className="
@@ -458,6 +464,7 @@ export default function BankStatementConverterPage() {
               shadow-xl
               "
             >
+
 
               <div
                 className="
@@ -472,12 +479,10 @@ export default function BankStatementConverterPage() {
                   size={28}
                 />
 
-
                 <h2
                   className="
                   text-2xl
                   font-bold
-                  text-slate-950
                   "
                 >
 
@@ -485,26 +490,64 @@ export default function BankStatementConverterPage() {
 
                 </h2>
 
+              </div>
+
+
+
+
+
+              <div
+                className="
+                mt-5
+                flex
+                items-center
+                gap-3
+                rounded-xl
+                bg-indigo-50
+                p-4
+                text-indigo-700
+                "
+              >
+
+                <FiDatabase />
+
+                <span>
+
+                  {transactions.length}
+                  {" "}
+                  transactions extracted
+
+                </span>
 
               </div>
 
 
+
+
+
+
               <p
                 className="
-                mt-4
+                mt-5
                 text-slate-600
                 "
               >
 
-                Your bank transactions are ready in Excel format.
+                Your bank statement has been
+                converted into a structured Excel file.
 
               </p>
 
 
 
+
+
+
               <button
 
-                onClick={downloadAgain}
+                onClick={
+                  downloadAgain
+                }
 
                 className="
                 mt-6
@@ -522,11 +565,12 @@ export default function BankStatementConverterPage() {
 
               >
 
-                <FiDownload/>
+                <FiDownload />
 
                 Download Excel Again
 
               </button>
+
 
 
             </div>
@@ -534,6 +578,9 @@ export default function BankStatementConverterPage() {
           )
 
         }
+
+
+
 
 
 
@@ -551,18 +598,33 @@ export default function BankStatementConverterPage() {
 
           {
             [
+
               {
-                title:"Universal PDF Support",
-                text:"Works with different bank statement formats worldwide."
+                title:
+                "Universal PDF Support",
+
+                text:
+                "Handles different bank statement formats worldwide."
               },
+
+
               {
-                title:"Secure Processing",
-                text:"Your financial files stay inside your browser."
+                title:
+                "Secure Processing",
+
+                text:
+                "Your financial files are processed locally in your browser."
               },
+
+
               {
-                title:"Excel Ready",
-                text:"Export structured transactions instantly."
+                title:
+                "Excel Ready",
+
+                text:
+                "Exports clean structured transactions instantly."
               }
+
 
             ].map((item)=>(
 
@@ -582,7 +644,6 @@ export default function BankStatementConverterPage() {
 
               >
 
-
                 <FiFileText
                   className="
                   mb-4
@@ -596,7 +657,6 @@ export default function BankStatementConverterPage() {
                   className="
                   text-lg
                   font-bold
-                  text-slate-950
                   "
                 >
 
@@ -628,6 +688,8 @@ export default function BankStatementConverterPage() {
 
 
         </div>
+
+
 
 
       </section>
