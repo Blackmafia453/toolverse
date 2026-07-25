@@ -167,28 +167,27 @@ export default function BankStatementConverterPage() {
 
 
 
-      const parsed =
-        parseTransactions(
-          extractedText
-        );
+      const parsedResult =
+  parseTransactions(
+    extractedText
+  );
 
 
+if (
+  !parsedResult.transactions ||
+  !parsedResult.transactions.length
+) {
 
-      if (!parsed.length) {
+  throw new Error(
+    "No transactions found in this statement."
+  );
 
-        throw new Error(
-          "No transactions found in this statement."
-        );
-
-      }
-
-
-
-      setTransactions(
-        parsed
-      );
+}
 
 
+setTransactions(
+  parsedResult.transactions
+);
 
       setProgressText(
         "Generating Excel file..."
@@ -197,15 +196,15 @@ export default function BankStatementConverterPage() {
 
 
       generateExcel(
-        parsed,
-        {
-          fileName:
-            `${file.name.replace(
-              ".pdf",
-              ""
-            )}-converted.xlsx`,
-        }
-      );
+  parsedResult.transactions,
+  {
+    fileName:
+      `${file.name.replace(
+        ".pdf",
+        ""
+      )}-converted.xlsx`,
+  }
+);
 
 
 
