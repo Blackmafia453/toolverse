@@ -35,10 +35,10 @@ async function getWorker() {
     },
   });
 
-  await worker.setParameters({
-    preserve_interword_spaces: "1",
-    tessedit_pageseg_mode: "6",
-  });
+ await worker.setParameters({
+  preserve_interword_spaces: "1",
+  tessedit_pageseg_mode: "SINGLE_BLOCK",
+});
 
   return worker;
 }
