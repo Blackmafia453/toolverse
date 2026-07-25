@@ -1,58 +1,44 @@
 import { Transaction, ParseResult } from "./types";
 import {
-  extractAmounts,
   extractDate,
-  sanitizeDescription,
   removeDuplicateTransactions,
-  removeHeadersFooters,
-  mergeWrappedLines,
-  isValidTransaction,
 } from "./utils";
 
-const MONTHS: Record<string, string> = {
-  jan: "01",
-  feb: "02",
-  mar: "03",
-  apr: "04",
-  may: "05",
-  jun: "06",
-  jul: "07",
-  aug: "08",
-  sep: "09",
-  oct: "10",
-  nov: "11",
-  dec: "12",
-};
 
 function normalizeDate(
-  date: string,
-  currentYear = new Date().getFullYear()
+  date: string
 ): string {
 
-  const clean = date
-    .replace(",", "")
-    .trim();
+  const clean =
+    date.replace(",", "").trim();
 
-  const parts = clean.split(/\s+/);
 
-  if (parts.length >= 2) {
+  const parts =
+    clean.split(/[\/\-]/);
 
-    const month =
-      MONTHS[
-        parts[0]
-          .toLowerCase()
-          .slice(0,3)
-      ];
 
-    const day =
+  if(parts.length === 3){
+
+    let month =
+      parts[0].padStart(2,"0");
+
+    let day =
       parts[1].padStart(2,"0");
 
-    const year =
-      parts[2] || currentYear;
+    let year =
+      parts[2];
 
-    if(month) {
-      return `${year}-${month}-${day}`;
+
+    if(year.length === 2){
+
+      year =
+        "20" + year;
+
     }
+
+
+    return `${year}-${month}-${day}`;
+
   }
 
 
@@ -61,40 +47,106 @@ function normalizeDate(
 }
 
 
-function isSummaryLine(line:string){
+
+
+
+function isNoiseLine(
+  line:string
+){
 
   const value =
     line.toLowerCase();
 
 
-  return (
 
-    value.includes("opening balance") ||
-    value.includes("closing balance") ||
-    value.includes("total withdrawals") ||
-    value.includes("total deposits") ||
-    value.includes("summary")
+  const noise = [
 
+    "previous balance",
+    "opening balance",
+    "closing balance",
+    "transactions continued",
+    "transaction summary",
+    "checks continued",
+    "interest charged",
+    "interest charge calculation",
+    "account reconciliation",
+    "payment information",
+    "annual percentage rate",
+    "total fees",
+    "total interest"
+
+  ];
+
+
+
+  return noise.some(
+    item =>
+      value.includes(item)
   );
 
 }
 
 
 
-function detectTransactionType(
-  line:string,
-  amounts:number[]
-){
 
-  const lower =
+
+
+
+function extractMoney(
+  text:string
+):number[] {
+
+
+  const matches =
+    text.match(
+      /\$?\s?\d{1,3}(?:,\d{3})*(?:\.\d{2})?/g
+    );
+
+
+  if(!matches)
+    return [];
+
+
+
+  return matches
+
+    .map(
+      value =>
+        Number(
+          value
+          .replace("$","")
+          .replace(/\s/g,"")
+          .replace(/,/g,"")
+        )
+    )
+
+    .filter(
+      value =>
+        !isNaN(value)
+    );
+
+}
+
+
+
+
+
+
+
+function detectType(
+  line:string
+):"debit"|"credit"|null{
+
+
+  const text =
     line.toLowerCase();
 
 
+
   if(
-    lower.includes("deposit") ||
-    lower.includes("credit") ||
-    lower.includes("cr") ||
-    lower.includes("+")
+    text.includes("deposit") ||
+    text.includes("credit") ||
+    text.includes("interest paid")
   ){
 
     return "credit";
@@ -102,16 +154,20 @@ function detectTransactionType(
   }
 
 
+
+
   if(
-    lower.includes("withdraw") ||
-    lower.includes("debit") ||
-    lower.includes("dr") ||
-    lower.includes("-")
+    text.includes("debit") ||
+    text.includes("withdraw") ||
+    text.includes("charge") ||
+    text.includes("fee") ||
+    text.includes("ach")
   ){
 
     return "debit";
 
   }
+
 
 
   return null;
@@ -120,108 +176,197 @@ function detectTransactionType(
 
 
 
-function getBalance(
+
+
+
+
+function cleanDescription(
+  line:string,
   amounts:number[]
 ){
 
-  if(amounts.length < 2)
-    return null;
+  let result =
+    line;
 
 
-  return amounts[
-    amounts.length - 1
-  ];
+
+  amounts.forEach(
+    amount=>{
+
+      result =
+        result.replace(
+          amount.toString(),
+          ""
+        );
+
+    }
+  );
+
+
+
+  return result
+
+    .replace(/\$/g,"")
+
+    .replace(/\s+/g," ")
+
+    .trim();
 
 }
 
 
 
-function getAmount(
-  amounts:number[]
-){
 
-  if(amounts.length === 0)
-    return null;
-
-
-  return amounts[
-    amounts.length - 2
-  ] ?? null;
-
-}
 
 
 
 function buildTransaction(
-  lines:string[],
-  date:string
-):Transaction | null {
+  date:string,
+  lines:string[]
+):Transaction|null {
 
 
   const fullLine =
     lines.join(" ");
 
 
-  const amounts =
-    extractAmounts(fullLine);
 
+  if(
+    isNoiseLine(fullLine)
+  ){
 
-  if(amounts.length < 2)
     return null;
+
+  }
+
+
+
+
+  const amounts =
+    extractMoney(
+      fullLine
+    );
+
+
+
+  if(
+    amounts.length === 0
+  ){
+
+    return null;
+
+  }
 
 
 
   const type =
-    detectTransactionType(
-      fullLine,
-      amounts
+    detectType(
+      fullLine
     );
 
 
-  const amount =
-    getAmount(amounts);
 
-
-  const balance =
-    getBalance(amounts);
+  if(!type)
+    return null;
 
 
 
-  let debit:null|number = null;
 
-  let credit:null|number = null;
+  let debit:number|null = null;
+
+  let credit:number|null = null;
+
+
+  let balance:number|null = null;
 
 
 
-  if(type === "credit"){
 
-    credit = amount;
+  /**
+   * Usually:
+   * amount + balance
+   */
+
+  if(
+    amounts.length >= 2
+  ){
+
+    balance =
+      amounts[
+        amounts.length - 1
+      ];
+
+
+
+    const amount =
+      amounts[
+        amounts.length - 2
+      ];
+
+
+
+    if(type==="credit"){
+
+      credit = amount;
+
+    }
+    else{
+
+      debit = amount;
+
+    }
 
   }
-  else{
 
-    debit = amount;
+  else {
+
+
+    if(type==="credit"){
+
+      credit =
+        amounts[0];
+
+    }
+    else{
+
+      debit =
+        amounts[0];
+
+    }
 
   }
+
+
+
 
 
 
   const description =
-    sanitizeDescription(
+    cleanDescription(
       fullLine,
-      date,
       amounts
     );
 
 
 
-  const transaction:Transaction = {
+
+
+  if(
+    description.length < 3
+  ){
+
+    return null;
+
+  }
+
+
+
+
+  return {
 
     date,
 
-    description:
-      description ||
-      "Transaction",
+    description,
 
     debit,
 
@@ -230,26 +375,16 @@ function buildTransaction(
     balance,
 
     transactionType:
-      type === "credit"
-        ? "Credit"
-        : "Debit"
+      type==="credit"
+      ? "Credit"
+      : "Debit"
 
   };
 
-
-
-  if(
-    !isValidTransaction(transaction)
-  ){
-
-    return null;
-
-  }
-
-
-  return transaction;
-
 }
+
+
+
 
 
 
@@ -262,52 +397,55 @@ export function parseTransactions(
 
   let lines =
     text
-      .split("\n")
-      .map(
-        line =>
-          line.trim()
-      )
-      .filter(Boolean);
+
+    .split("\n")
+
+    .map(
+      line =>
+        line.trim()
+    )
+
+    .filter(Boolean);
 
 
 
-  lines =
-    removeHeadersFooters(
-      lines
-    );
+
+  const transactions:
+    Transaction[] = [];
 
 
-
-  lines =
-    mergeWrappedLines(
-      lines
-    );
-
-
-
-  const transactions:Transaction[]=[];
 
 
   let currentDate = "";
 
-  let buffer:string[]=[];
+  let buffer:string[] = [];
 
 
 
-  function processBuffer(){
+
+
+
+  function process(){
 
     if(
-      !buffer.length ||
-      !currentDate
-    )
+      !currentDate ||
+      !buffer.length
+    ){
+
+      buffer=[];
+
       return;
+
+    }
+
 
 
     const transaction =
       buildTransaction(
-        buffer,
-        currentDate
+        currentDate,
+        buffer
       );
+
 
 
     if(transaction){
@@ -319,9 +457,12 @@ export function parseTransactions(
     }
 
 
+
     buffer=[];
 
   }
+
+
 
 
 
@@ -332,71 +473,73 @@ export function parseTransactions(
   ){
 
 
-    if(
-      isSummaryLine(line)
-    ){
 
-      continue;
-
-    }
+    const date =
+      extractDate(
+        line
+      );
 
 
 
-    const foundDate =
-      extractDate(line);
+
+    if(date){
 
 
+      process();
 
-    if(foundDate){
-
-
-      processBuffer();
 
 
       currentDate =
         normalizeDate(
-          foundDate
+          date
         );
+
 
 
       buffer.push(
-        line.replace(
-          foundDate,
+
+        line
+
+        .replace(
+          date,
           ""
         )
+
         .trim()
+
       );
 
 
-    }
-    else{
-
-
-      if(
-        buffer.length
-      ){
-
-        buffer.push(
-          line
-        );
-
-      }
-
 
     }
 
+    else if(
+      currentDate
+    ){
+
+      buffer.push(
+        line
+      );
+
+    }
 
 
   }
 
 
-  processBuffer();
+
+
+
+  process();
+
+
 
 
 
   return {
 
     transactions:
+
       removeDuplicateTransactions(
         transactions
       )
