@@ -1,9 +1,33 @@
-import { ParsedTransaction, ParseResult } from "./types";
-import { cleanNumber, normalizeDate } from "./utils";
+import { Transaction, ParseResult } from "./types";
+import { cleanAmount } from "./utils";
+
+
+function normalizeDate(value: string) {
+  const parts = value.split(/[\/\-]/);
+
+  if (parts.length !== 3) {
+    return value;
+  }
+
+  let day = parts[0];
+  let month = parts[1];
+  let year = parts[2];
+
+
+  if (year.length === 2) {
+    year = "20" + year;
+  }
+
+
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+}
+
 
 
 function isValidAmount(value: string) {
+
   if (!value) return false;
+
 
   const num = Number(
     value
@@ -12,27 +36,37 @@ function isValidAmount(value: string) {
       .trim()
   );
 
-  if (isNaN(num)) return false;
 
-  // Ignore PDF artifacts like page numbers
-  if (num === 131) return false;
+  if (isNaN(num)) {
+    return false;
+  }
+
+
+  // Ignore PDF artifact
+  if (num === 131) {
+    return false;
+  }
+
 
   return true;
 }
 
 
+
+
 function extractAmounts(text: string): string[] {
 
-  const matches = text.match(
-    /\(?\d[\d,]*\.?\d{0,2}\)?/g
-  );
+  const matches =
+    text.match(/\(?\d[\d,]*\.?\d{0,2}\)?/g);
 
 
-  if (!matches) return [];
+  if (!matches) {
+    return [];
+  }
 
 
   return matches
-    .map((item) =>
+    .map(item =>
       item
         .replace(/[(),]/g, "")
         .trim()
@@ -40,6 +74,8 @@ function extractAmounts(text: string): string[] {
     .filter(isValidAmount);
 
 }
+
+
 
 
 
@@ -60,14 +96,19 @@ function cleanPDFArtifacts(text: string) {
 
 
 
+
+
 function extractDate(text: string) {
 
-  const match = text.match(
-    /\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/
-  );
+  const match =
+    text.match(
+      /\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/
+    );
 
 
-  if (!match) return "";
+  if (!match) {
+    return "";
+  }
 
 
   return normalizeDate(match[0]);
@@ -76,9 +117,12 @@ function extractDate(text: string) {
 
 
 
-function isDebitRow(text:string){
 
-  const lower = text.toLowerCase();
+
+function isDebitRow(text: string) {
+
+  const lower =
+    text.toLowerCase();
 
 
   return (
@@ -94,9 +138,12 @@ function isDebitRow(text:string){
 
 
 
-function isCreditRow(text:string){
 
-  const lower=text.toLowerCase();
+
+function isCreditRow(text: string) {
+
+  const lower =
+    text.toLowerCase();
 
 
   return (
@@ -110,37 +157,36 @@ function isCreditRow(text:string){
 
 
 
+
+
 function extractDescription(
-  text:string,
-  amounts:string[]
-){
+  text: string,
+  amounts: string[]
+) {
 
-  let description=text;
+  let description = text;
 
 
-  amounts.forEach(amount=>{
+  amounts.forEach(amount => {
     description =
-      description.replace(amount,"");
+      description.replace(amount, "");
   });
 
 
-  description =
-    description
-      .replace(/\b131\b/g,"")
-      .replace(/=/g,"")
-      .replace(/\s+/g," ")
-      .trim();
-
-
-  return description;
+  return description
+    .replace(/=/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 
 }
 
 
 
+
+
 function parseTransactionLine(
-  line:string
-):ParsedTransaction|null{
+  line: string
+): Transaction | null {
 
 
   const cleaned =
@@ -152,7 +198,10 @@ function parseTransactionLine(
     extractDate(cleaned);
 
 
-  if(!date) return null;
+
+  if (!date) {
+    return null;
+  }
 
 
 
@@ -161,32 +210,32 @@ function parseTransactionLine(
 
 
 
-  if(amounts.length===0)
+  if (!amounts.length) {
     return null;
+  }
 
 
 
   const numbers =
-    amounts.map(a =>
-      Number(cleanNumber(a))
+    amounts.map(amount =>
+      Number(cleanAmount(amount))
     );
 
 
 
-  let debit=0;
-  let credit=0;
-  let balance=0;
+  if (!numbers.length) {
+    return null;
+  }
 
 
 
-  /*
-    BANK STATEMENT LOGIC
+  let debit: number | null = null;
+  let credit: number | null = null;
+  let balance: number | null = null;
 
-    Balance is always the highest
-    amount in these PDF layouts.
 
-  */
 
+  // Balance generally highest value in this PDF layout
 
   balance =
     Math.max(...numbers);
@@ -195,65 +244,41 @@ function parseTransactionLine(
 
   const remaining =
     numbers.filter(
-      n=>n!==balance
+      value => value !== balance
     );
 
 
 
-  if(isDebitRow(cleaned)){
 
 
-    /*
-      Debit format:
+  if (isDebitRow(cleaned)) {
 
-      Description Debit Balance
-
-    */
-
-
-    if(remaining.length){
-
+    if (remaining.length) {
       debit =
-        remaining[remaining.length-1];
-
+        remaining[remaining.length - 1];
     }
 
 
-
-  }
-  else if(isCreditRow(cleaned)){
+  } else if (isCreditRow(cleaned)) {
 
 
-    /*
-      Credit format:
-
-      Description Credit Balance
-
-    */
-
-
-    if(remaining.length){
-
+    if (remaining.length) {
       credit =
-        remaining[remaining.length-1];
-
+        remaining[remaining.length - 1];
     }
 
 
-  }
-  else {
+  } else {
 
 
-    // fallback
-
-    if(numbers.length >=2){
-
+    if (remaining.length) {
       credit =
-        remaining[0] ?? 0;
-
+        remaining[0];
     }
 
   }
+
+
 
 
 
@@ -265,13 +290,13 @@ function parseTransactionLine(
 
 
 
-  if(
-    !description &&
-    debit===0 &&
-    credit===0
-  ){
+
+
+  if (!description && !debit && !credit) {
     return null;
   }
+
+
 
 
 
@@ -285,7 +310,7 @@ function parseTransactionLine(
 
     credit,
 
-    balance
+    balance,
 
   };
 
@@ -294,40 +319,40 @@ function parseTransactionLine(
 
 
 
+
 function removeDuplicates(
- transactions:ParsedTransaction[]
-){
-
- const seen =
-   new Set<string>();
+  transactions: Transaction[]
+) {
 
 
- return transactions.filter(tx=>{
+  const seen =
+    new Set<string>();
 
 
-  const key =
-    [
-      tx.date,
-      tx.description,
-      tx.debit,
-      tx.credit,
-      tx.balance
-    ].join("|");
+  return transactions.filter(tx => {
 
 
-
-  if(seen.has(key))
-    return false;
+    const key =
+      [
+        tx.date,
+        tx.description,
+        tx.debit,
+        tx.credit,
+        tx.balance,
+      ].join("|");
 
 
 
-  seen.add(key);
+    if (seen.has(key)) {
+      return false;
+    }
 
-  return true;
 
+    seen.add(key);
 
- });
+    return true;
 
+  });
 
 }
 
@@ -336,102 +361,96 @@ function removeDuplicates(
 
 
 export function parseTransactions(
- rawText:string
-):ParseResult{
+  rawText: string
+): ParseResult {
 
 
- const lines =
-   rawText
-    .split(/\r?\n/)
-    .map(line=>cleanPDFArtifacts(line))
-    .filter(Boolean);
-
-
-
- const transactions:ParsedTransaction[]=[];
-
-
- let previousText="";
+  const lines =
+    rawText
+      .split(/\r?\n/)
+      .map(line =>
+        cleanPDFArtifacts(line)
+      )
+      .filter(Boolean);
 
 
 
- for(const line of lines){
+
+  const transactions: Transaction[] = [];
 
 
-   const transaction =
-     parseTransactionLine(line);
-
-
-
-   if(transaction){
-
-
-     if(previousText){
-
-       transaction.description =
-         `${previousText} ${transaction.description}`
-          .trim();
-
-
-       previousText="";
-
-     }
-
-
-     transactions.push(transaction);
-
-
-   }
-   else {
-
-
-     const isHeader =
-       /date|description|balance|account|statement|page/i
-       .test(line);
+  let previousText = "";
 
 
 
-     if(!isHeader){
-
-       previousText +=
-         " "+line;
-
-     }
-
-   }
 
 
- }
+  for (const line of lines) {
+
+
+    const transaction =
+      parseTransactionLine(line);
 
 
 
- const finalTransactions =
-   removeDuplicates(
-     transactions
-   );
+
+    if (transaction) {
+
+
+      if (previousText) {
+
+        transaction.description =
+          `${previousText} ${transaction.description}`
+            .trim();
+
+
+        previousText = "";
+
+      }
 
 
 
- return {
-
-   success:
-     finalTransactions.length>0,
+      transactions.push(transaction);
 
 
-   transactions:
-     finalTransactions,
+    } else {
 
 
-   totalTransactions:
-     finalTransactions.length,
+      const isHeader =
+        /date|description|balance|account|statement|page/i
+          .test(line);
 
 
-   error:
-     finalTransactions.length
-       ? undefined
-       : "No transactions found"
 
- };
+      if (!isHeader) {
 
+        previousText +=
+          " " + line;
+
+      }
+
+    }
+
+
+  }
+
+
+
+
+
+  const finalTransactions =
+    removeDuplicates(
+      transactions
+    );
+
+
+
+
+
+  return {
+
+    transactions: finalTransactions,
+
+  };
 
 }
