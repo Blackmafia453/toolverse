@@ -21,37 +21,43 @@ type PDFTextItem = {
 
 
 
-function sortTextItems(
+type PositionedText = {
+
+  text: string;
+
+  x: number;
+
+  y: number;
+
+};
+
+
+
+
+
+function normalizeItems(
   items: PDFTextItem[]
-) {
-
-  return items.sort((a, b) => {
-
-    const ay =
-      a.transform?.[5] ?? 0;
+): PositionedText[] {
 
 
-    const by =
-      b.transform?.[5] ?? 0;
+  return items
+    .map(item => ({
 
+      text:
+        item.str?.trim() || "",
 
+      x:
+        item.transform?.[4] ?? 0,
 
-    if (
-      Math.abs(ay - by) < 5
-    ) {
+      y:
+        item.transform?.[5] ?? 0,
 
-      return (
-        (a.transform?.[4] ?? 0) -
-        (b.transform?.[4] ?? 0)
-      );
+    }))
 
-    }
-
-
-
-    return by - ay;
-
-  });
+    .filter(
+      item =>
+        item.text.length > 0
+    );
 
 }
 
@@ -59,84 +65,104 @@ function sortTextItems(
 
 
 
-function buildLines(
-  items: PDFTextItem[]
+
+function sortItems(
+  items: PositionedText[]
+) {
+
+
+  return items.sort((a,b)=>{
+
+
+    const yDiff =
+      b.y - a.y;
+
+
+    if(
+      Math.abs(yDiff) > 5
+    ){
+      return yDiff;
+    }
+
+
+    return a.x - b.x;
+
+  });
+
+
+}
+
+
+
+
+
+
+
+function buildTableLines(
+  items: PositionedText[]
 ): string[] {
 
 
-  const lines: string[] = [];
+  const lines:string[]=[];
 
 
-  let currentLine = "";
+  let currentY:number|null=null;
 
 
-  let currentY: number | null = null;
+  let row:PositionedText[]=[];
 
 
 
-  for (
+
+  for(
     const item of items
-  ) {
+  ){
 
 
-    const text =
-      item.str?.trim();
+    if(currentY===null){
 
-
-
-    if (!text)
-      continue;
-
-
-
-    const y =
-      item.transform?.[5] ?? 0;
-
-
-
-    if (
-      currentY === null
-    ) {
-
-      currentY = y;
+      currentY=item.y;
 
     }
 
 
 
+    if(
+      Math.abs(
+        currentY - item.y
+      ) > 5
+    ){
 
-    if (
-      currentY !== null &&
-      Math.abs(currentY - y) > 5
-    ) {
 
+      if(row.length){
 
+        row.sort(
+          (a,b)=>a.x-b.x
+        );
 
-      if (
-        currentLine.trim()
-      ) {
 
         lines.push(
-          currentLine.trim()
+          row
+          .map(
+            col=>col.text
+          )
+          .join(" ")
         );
 
       }
 
 
 
-      currentLine = "";
+      row=[];
 
+      currentY=item.y;
 
-      currentY = y;
 
     }
 
 
 
-
-    currentLine +=
-      `${text} `;
-
+    row.push(item);
 
 
   }
@@ -144,13 +170,20 @@ function buildLines(
 
 
 
+  if(row.length){
 
-  if (
-    currentLine.trim()
-  ) {
+
+    row.sort(
+      (a,b)=>a.x-b.x
+    );
+
 
     lines.push(
-      currentLine.trim()
+      row
+      .map(
+        col=>col.text
+      )
+      .join(" ")
     );
 
   }
@@ -167,138 +200,182 @@ function buildLines(
 
 
 
+
+function cleanExtractedText(
+ text:string
+){
+
+
+ return text
+
+  .replace(
+    /\u00A0/g,
+    " "
+  )
+
+  .replace(
+    /[ ]{2,}/g,
+    " "
+  )
+
+  .replace(
+    /\n{3,}/g,
+    "\n\n"
+  )
+
+  .trim();
+
+
+}
+
+
+
+
+
+
+
+
 export async function extractPDFText(
-  file: File
-): Promise<PDFExtractionResult> {
+ file:File
+):Promise<PDFExtractionResult>{
 
 
-  const buffer =
-    await file.arrayBuffer();
 
+ const buffer =
+   await file.arrayBuffer();
 
 
 
-  const pdf =
-    await pdfjsLib
-      .getDocument({
 
-        data: buffer,
 
-        useWorkerFetch: false,
+ const pdf =
+   await pdfjsLib
+    .getDocument({
 
-      })
-      .promise;
+      data:buffer,
 
+      useWorkerFetch:false,
 
+    })
+    .promise;
 
 
 
-  const pagesText: string[] = [];
 
 
-  let characterCount = 0;
+ const pages:string[]=[];
 
 
+ let characterCount=0;
 
 
 
 
-  for (
-    let pageNumber = 1;
-    pageNumber <= pdf.numPages;
-    pageNumber++
-  ) {
 
+ for(
+   let pageNumber=1;
+   pageNumber<=pdf.numPages;
+   pageNumber++
+ ){
 
-    const page =
-      await pdf.getPage(
-        pageNumber
-      );
 
 
+   const page =
+     await pdf.getPage(
+       pageNumber
+     );
 
 
-    const content =
-      await page.getTextContent();
 
 
 
+   const content =
+     await page.getTextContent();
 
-    const items =
-      sortTextItems(
-        content.items as PDFTextItem[]
-      );
 
 
 
 
-    const lines =
-      buildLines(
-        items
-      );
+   const normalized =
+     normalizeItems(
+       content.items as PDFTextItem[]
+     );
 
 
 
 
-    const pageText =
-      lines.join("\n");
 
+   const sorted =
+     sortItems(
+       normalized
+     );
 
 
-    characterCount +=
-      pageText.length;
 
 
 
+   const lines =
+     buildTableLines(
+       sorted
+     );
 
-    pagesText.push(
-      pageText
-    );
 
-  }
 
 
 
+   const pageText =
+     lines.join("\n");
 
 
 
 
-  const finalText =
-    pagesText
-      .join("\n\n")
-      .replace(
-        /\u00A0/g,
-        " "
-      )
-      .replace(
-        /[ ]{2,}/g,
-        " "
-      )
-      .replace(
-        /\n{3,}/g,
-        "\n\n"
-      )
-      .trim();
 
+   characterCount +=
+     pageText.length;
 
 
 
 
 
+   pages.push(
+     pageText
+   );
 
-  return {
 
-    text: finalText,
 
+ }
 
-    pages:
-      pdf.numPages,
 
 
 
-    isScanned:
-      characterCount < 50,
 
-  };
+ const finalText =
+   cleanExtractedText(
+     pages.join("\n\n")
+   );
+
+
+
+
+
+
+ return {
+
+
+   text:
+     finalText,
+
+
+   pages:
+     pdf.numPages,
+
+
+
+   isScanned:
+     characterCount < 50,
+
+
+ };
+
 
 }
