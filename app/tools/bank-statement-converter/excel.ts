@@ -84,10 +84,11 @@ export function generateExcel(
   /**
    * Auto filter
    */
+ if (worksheet["!ref"]) {
   worksheet["!autofilter"] = {
     ref: worksheet["!ref"],
   };
-
+}
 
 
   /**
