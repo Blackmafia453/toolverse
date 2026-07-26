@@ -26,12 +26,7 @@ export default function ToolsGrid() {
   const allTools = [
 
 
-    {
-      name: "Bank Statement Converter",
-      category: "Finance",
-      icon: <FiCreditCard />,
-      link: "/tools/bank-statement-converter",
-    },
+    
 
 
     {

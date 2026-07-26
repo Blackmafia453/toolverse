@@ -15,13 +15,7 @@ export default function PopularTools() {
 
   const tools = [
 
-    {
-      name: "Bank Statement Converter",
-      description:
-        "Convert PDF bank statements into Excel, CSV and JSON formats instantly with Soupxor.",
-      icon: <FaUniversity />,
-      link: "/tools/bank-statement-converter",
-    },
+  
 
     {
       name: "Word Counter",

@@ -10,11 +10,7 @@ import {
 } from "react-icons/fi";
 
 const tools = [
-  {
-    name: "Bank Statement Converter",
-    category: "Finance",
-    link: "/tools/bank-statement-converter",
-  },
+ 
   {
     name: "Word Counter",
     category: "Text",
@@ -158,7 +154,7 @@ export default function SearchBar() {
 
               <input
                 type="text"
-                placeholder="Search tools like Bank Statement Converter..."
+                placeholder="Search tools like PDF Merge, Image Compressor..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="flex-1 bg-transparent px-5 py-6 text-lg text-slate-800 placeholder:text-slate-400 outline-none"

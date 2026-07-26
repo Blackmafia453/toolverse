@@ -22,10 +22,10 @@ export default function PercentageHero() {
         "
       >
 
-        <FiTrendingUp />
+       <FiTrendingUp />
 
-        Math & Finance Calculator
-
+       Finance & Calculator Tools
+       
       </div>
 
 
