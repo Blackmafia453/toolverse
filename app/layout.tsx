@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
+import GlobalSchema from "@/components/seo/GlobalSchema";
+
 const siteUrl = "https://soupxor.com";
 
 export const metadata: Metadata = {
@@ -186,7 +188,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+
+        <GlobalSchema />
+
+        {children}
+
+      </body>
     </html>
   );
 }

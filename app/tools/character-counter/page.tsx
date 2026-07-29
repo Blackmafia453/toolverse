@@ -37,18 +37,19 @@ export default function CharacterCounter() {
 
 
 
-  return (
+ return (
+    <>
+      
 
-    <main
-      className="
-      min-h-screen
-      relative
-      overflow-hidden
-      px-5
-      py-16
-      "
-    >
-
+      <main
+        className="
+        min-h-screen
+        relative
+        overflow-hidden
+        px-5
+        py-16
+        "
+      >
       <div
         className="
         absolute
@@ -368,12 +369,12 @@ export default function CharacterCounter() {
       </div>
 
 
-    </main>
+          </main>
 
+    </>
   );
 
 }
-
 
 
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import {
   FiCopy,
   FiTrash2,
@@ -14,89 +15,133 @@ import {
   FiZap,
 } from "react-icons/fi";
 
+
+import ToolSections from "@/components/seo/ToolSections";
+
+import { wordCounterSEO } from "@/components/seo/toolData/wordCounterSEO";
+
 export default function WordCounterPage() {
+
   const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
 
+
   const words =
-    text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
+    text.trim() === ""
+      ? 0
+      : text.trim().split(/\s+/).length;
+
 
   const characters = text.length;
 
+
   const charactersWithoutSpaces =
     text.replace(/\s/g, "").length;
+
 
   const sentences =
     text.trim() === ""
       ? 0
       : text.split(/[.!?]+/).filter(Boolean).length;
 
+
   const paragraphs =
     text.trim() === ""
       ? 0
       : text.split(/\n+/).filter(Boolean).length;
 
+
   const readingTime =
-    words === 0 ? 0 : Math.ceil(words / 200);
+    words === 0
+      ? 0
+      : Math.ceil(words / 200);
+
 
 
   const copyText = async () => {
+
     if (!text) return;
 
     await navigator.clipboard.writeText(text);
 
     setCopied(true);
 
+
     setTimeout(() => {
+
       setCopied(false);
+
     }, 2000);
+
   };
+
 
 
   const clearText = () => {
+
     setText("");
+
   };
 
 
+
   const stats = [
+
     {
       title: "Total Words",
       value: words,
       icon: <FiType />,
     },
+
     {
       title: "Characters",
       value: characters,
       icon: <FiHash />,
     },
+
     {
       title: "Without Spaces",
       value: charactersWithoutSpaces,
       icon: <FiAlignLeft />,
     },
+
     {
       title: "Sentences",
       value: sentences,
       icon: <FiEdit3 />,
     },
+
     {
       title: "Paragraphs",
       value: paragraphs,
       icon: <FiFileText />,
     },
+
     {
       title: "Reading Time",
       value: `${readingTime} min`,
       icon: <FiClock />,
     },
+
   ];
 
 
-  return (
-    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-5 py-14">
+
+ return (
+
+    <main className="
+      min-h-screen
+      bg-gradient-to-br
+      from-indigo-50
+      via-white
+      to-purple-50
+      px-5
+      py-14
+    ">
+
+      
 
       <div className="max-w-6xl mx-auto">
-
 
         {/* Hero Section */}
 
@@ -104,17 +149,17 @@ export default function WordCounterPage() {
 
 
           <div className="
-          inline-flex
-          items-center
-          gap-2
-          px-5
-          py-2
-          rounded-full
-          bg-indigo-100
-          text-indigo-700
-          text-sm
-          font-semibold
-          mb-6
+            inline-flex
+            items-center
+            gap-2
+            px-5
+            py-2
+            rounded-full
+            bg-indigo-100
+            text-indigo-700
+            text-sm
+            font-semibold
+            mb-6
           ">
 
             <FiZap />
@@ -126,19 +171,19 @@ export default function WordCounterPage() {
 
 
           <div className="
-          w-24
-          h-24
-          mx-auto
-          rounded-3xl
-          bg-gradient-to-br
-          from-indigo-600
-          via-blue-600
-          to-purple-600
-          flex
-          items-center
-          justify-center
-          shadow-xl
-          mb-6
+            w-24
+            h-24
+            mx-auto
+            rounded-3xl
+            bg-gradient-to-br
+            from-indigo-600
+            via-blue-600
+            to-purple-600
+            flex
+            items-center
+            justify-center
+            shadow-xl
+            mb-6
           ">
 
             <FiEdit3 className="text-white text-5xl"/>
@@ -148,11 +193,11 @@ export default function WordCounterPage() {
 
 
           <h1 className="
-          text-4xl
-          md:text-6xl
-          font-extrabold
-          text-gray-900
-          tracking-tight
+            text-4xl
+            md:text-6xl
+            font-extrabold
+            text-gray-900
+            tracking-tight
           ">
 
             Word Counter
@@ -162,12 +207,12 @@ export default function WordCounterPage() {
 
 
           <p className="
-          mt-5
-          max-w-2xl
-          mx-auto
-          text-gray-500
-          text-lg
-          leading-relaxed
+            mt-5
+            max-w-2xl
+            mx-auto
+            text-gray-500
+            text-lg
+            leading-relaxed
           ">
 
             Analyze your text instantly. Count words, characters,
@@ -176,32 +221,27 @@ export default function WordCounterPage() {
           </p>
 
 
-        </section>
-
-
-
-
-        {/* Main Tool */}
+        </section>        {/* Main Tool */}
 
         <section className="
-        bg-white/90
-        backdrop-blur-xl
-        rounded-3xl
-        border
-        border-gray-100
-        shadow-2xl
-        p-6
-        md:p-10
+          bg-white/90
+          backdrop-blur-xl
+          rounded-3xl
+          border
+          border-gray-100
+          shadow-2xl
+          p-6
+          md:p-10
         ">
 
 
           <div className="
-          flex
-          items-center
-          gap-3
-          mb-5
-          text-gray-800
-          font-semibold
+            flex
+            items-center
+            gap-3
+            mb-5
+            text-gray-800
+            font-semibold
           ">
 
             <FiFileText className="text-indigo-600"/>
@@ -221,23 +261,23 @@ export default function WordCounterPage() {
             placeholder="Write or paste your content here..."
 
             className="
-            w-full
-            h-80
-            rounded-2xl
-            border
-            border-gray-200
-            bg-gray-50
-            p-6
-            text-gray-800
-            text-lg
-            leading-relaxed
-            outline-none
-            resize-none
-            transition
-            focus:bg-white
-            focus:ring-4
-            focus:ring-indigo-100
-            focus:border-indigo-500
+              w-full
+              h-80
+              rounded-2xl
+              border
+              border-gray-200
+              bg-gray-50
+              p-6
+              text-gray-800
+              text-lg
+              leading-relaxed
+              outline-none
+              resize-none
+              transition
+              focus:bg-white
+              focus:ring-4
+              focus:ring-indigo-100
+              focus:border-indigo-500
             "
 
           />
@@ -245,11 +285,11 @@ export default function WordCounterPage() {
 
 
           <div className="
-          flex
-          flex-col
-          sm:flex-row
-          gap-4
-          mt-6
+            flex
+            flex-col
+            sm:flex-row
+            gap-4
+            mt-6
           ">
 
 
@@ -258,21 +298,21 @@ export default function WordCounterPage() {
               onClick={copyText}
 
               className="
-              flex-1
-              bg-gradient-to-r
-              from-indigo-600
-              to-purple-600
-              hover:scale-[1.02]
-              text-white
-              py-4
-              rounded-2xl
-              font-semibold
-              flex
-              items-center
-              justify-center
-              gap-2
-              transition
-              shadow-lg
+                flex-1
+                bg-gradient-to-r
+                from-indigo-600
+                to-purple-600
+                hover:scale-[1.02]
+                text-white
+                py-4
+                rounded-2xl
+                font-semibold
+                flex
+                items-center
+                justify-center
+                gap-2
+                transition
+                shadow-lg
               "
 
             >
@@ -291,18 +331,18 @@ export default function WordCounterPage() {
               onClick={clearText}
 
               className="
-              flex-1
-              bg-gray-100
-              hover:bg-gray-200
-              text-gray-700
-              py-4
-              rounded-2xl
-              font-semibold
-              flex
-              items-center
-              justify-center
-              gap-2
-              transition
+                flex-1
+                bg-gray-100
+                hover:bg-gray-200
+                text-gray-700
+                py-4
+                rounded-2xl
+                font-semibold
+                flex
+                items-center
+                justify-center
+                gap-2
+                transition
               "
 
             >
@@ -322,49 +362,49 @@ export default function WordCounterPage() {
           {/* Statistics */}
 
           <div className="
-          grid
-          grid-cols-2
-          lg:grid-cols-3
-          gap-5
-          mt-10
+            grid
+            grid-cols-2
+            lg:grid-cols-3
+            gap-5
+            mt-10
           ">
 
 
             {stats.map((stat)=>(
 
               <div
-              key={stat.title}
-              className="
-              group
-              bg-gradient-to-br
-              from-indigo-50
-              to-purple-50
-              border
-              border-indigo-100
-              rounded-3xl
-              p-6
-              text-center
-              hover:-translate-y-1
-              hover:shadow-lg
-              transition
-              "
+                key={stat.title}
+                className="
+                  group
+                  bg-gradient-to-br
+                  from-indigo-50
+                  to-purple-50
+                  border
+                  border-indigo-100
+                  rounded-3xl
+                  p-6
+                  text-center
+                  hover:-translate-y-1
+                  hover:shadow-lg
+                  transition
+                "
               >
 
                 <div className="
-                w-14
-                h-14
-                mx-auto
-                rounded-2xl
-                bg-white
-                flex
-                items-center
-                justify-center
-                text-indigo-600
-                text-2xl
-                shadow-sm
-                mb-4
-                group-hover:scale-110
-                transition
+                  w-14
+                  h-14
+                  mx-auto
+                  rounded-2xl
+                  bg-white
+                  flex
+                  items-center
+                  justify-center
+                  text-indigo-600
+                  text-2xl
+                  shadow-sm
+                  mb-4
+                  group-hover:scale-110
+                  transition
                 ">
 
                   {stat.icon}
@@ -373,9 +413,9 @@ export default function WordCounterPage() {
 
 
                 <h3 className="
-                text-3xl
-                font-bold
-                text-gray-900
+                  text-3xl
+                  font-bold
+                  text-gray-900
                 ">
 
                   {stat.value}
@@ -384,9 +424,9 @@ export default function WordCounterPage() {
 
 
                 <p className="
-                text-sm
-                text-gray-500
-                mt-2
+                  text-sm
+                  text-gray-500
+                  mt-2
                 ">
 
                   {stat.title}
@@ -407,32 +447,33 @@ export default function WordCounterPage() {
 
 
 
+
         {/* Trust Section */}
 
         <section className="
-        mt-8
-        grid
-        md:grid-cols-2
-        gap-5
+          mt-8
+          grid
+          md:grid-cols-2
+          gap-5
         ">
 
 
           <div className="
-          bg-white
-          border
-          border-gray-100
-          rounded-3xl
-          p-7
-          shadow-sm
+            bg-white
+            border
+            border-gray-100
+            rounded-3xl
+            p-7
+            shadow-sm
           ">
 
             <FiShield className="text-indigo-600 text-3xl mb-4"/>
 
             <h2 className="
-            text-xl
-            font-bold
-            text-gray-900
-            mb-3
+              text-xl
+              font-bold
+              text-gray-900
+              mb-3
             ">
 
               Private & Secure
@@ -441,8 +482,8 @@ export default function WordCounterPage() {
 
 
             <p className="
-            text-gray-500
-            leading-relaxed
+              text-gray-500
+              leading-relaxed
             ">
 
               Your text never leaves your browser. All calculations happen locally for maximum privacy.
@@ -455,21 +496,21 @@ export default function WordCounterPage() {
 
 
           <div className="
-          bg-white
-          border
-          border-gray-100
-          rounded-3xl
-          p-7
-          shadow-sm
+            bg-white
+            border
+            border-gray-100
+            rounded-3xl
+            p-7
+            shadow-sm
           ">
 
             <FiZap className="text-purple-600 text-3xl mb-4"/>
 
             <h2 className="
-            text-xl
-            font-bold
-            text-gray-900
-            mb-3
+              text-xl
+              font-bold
+              text-gray-900
+              mb-3
             ">
 
               Instant Results
@@ -478,8 +519,8 @@ export default function WordCounterPage() {
 
 
             <p className="
-            text-gray-500
-            leading-relaxed
+              text-gray-500
+              leading-relaxed
             ">
 
               Get real-time word analysis while typing without waiting or uploading files.
@@ -493,8 +534,18 @@ export default function WordCounterPage() {
         </section>
 
 
+
+
+
+
+  
+  <ToolSections data={wordCounterSEO} />
+
+
       </div>
 
     </main>
+
   );
+
 }
