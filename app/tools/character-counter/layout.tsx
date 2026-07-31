@@ -1,12 +1,11 @@
 import type { ReactNode } from "react";
 import ToolSEO from "@/components/seo/ToolSEO";
-import { characterCounterSEO } from "@/components/seo/toolData/characterCounterSEO";
+import {
+  characterCounterSEO,
+  characterCounterMetadata,
+} from "@/components/seo/toolData/characterCounterSEO";
 
-export const metadata = {
-  title: "Free Character Counter Tool - Count Characters Online",
-  description:
-    "Use Soupxor's free Character Counter to instantly count characters, words, and sentences online.",
-};
+export const metadata = characterCounterMetadata;
 
 export default function CharacterCounterLayout({
   children,

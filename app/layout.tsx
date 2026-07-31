@@ -72,12 +72,7 @@ export const metadata: Metadata = {
 
   referrer: "origin-when-cross-origin",
 
-  alternates: {
-    canonical: "/",
-    languages: {
-      "en-US": "/",
-    },
-  },
+
 
   robots: {
     index: true,
