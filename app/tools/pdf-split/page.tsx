@@ -152,52 +152,128 @@ const blob = new Blob(
 
       <div className="max-w-6xl mx-auto">
 
-        <section className="text-center mb-12">
+       <section className="relative overflow-hidden rounded-[32px] border border-white/60 bg-white/70 backdrop-blur-xl shadow-2xl px-8 py-16 mb-12">
 
-          <div className="
-            inline-flex
-            items-center
-            gap-2
-            px-4
-            py-2
-            rounded-full
-            bg-indigo-100
-            text-indigo-700
-            text-sm
-            font-semibold
-            mb-5
-          ">
+  {/* Background Glow */}
+  <div className="absolute -top-24 -left-20 h-72 w-72 rounded-full bg-indigo-300/25 blur-3xl"></div>
+  <div className="absolute -bottom-24 -right-20 h-72 w-72 rounded-full bg-purple-300/20 blur-3xl"></div>
 
-            <FiScissors />
+  <div className="relative z-10 text-center">
 
-            PDF Split Tool
+    <div className="
+      inline-flex
+      items-center
+      gap-2
+      rounded-full
+      border
+      border-indigo-200
+      bg-indigo-50
+      px-5
+      py-2
+      text-sm
+      font-semibold
+      text-indigo-700
+      shadow-sm
+    ">
+      <FiScissors className="text-indigo-600" />
+      PDF Split Tool
+    </div>
 
-          </div>
+    <h1 className="
+      mt-6
+      text-4xl
+      md:text-6xl
+      font-extrabold
+      tracking-tight
+      text-gray-900
+      leading-tight
+    ">
+      Split PDF Files
+      <span className="block bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-500 bg-clip-text text-transparent">
+        Fast, Secure & Free
+      </span>
+    </h1>
 
+    <p className="
+      mt-6
+      max-w-3xl
+      mx-auto
+      text-lg
+      leading-8
+      text-gray-600
+    ">
+      Extract specific pages from any PDF directly inside your browser.
+      No uploads, no waiting, and no privacy concerns. Your files never
+      leave your device.
+    </p>
 
-          <h1 className="
-            text-4xl
-            md:text-5xl
-            font-bold
-            text-gray-900
-          ">
-            Split PDF Files Easily
-          </h1>
+    <div className="
+      mt-10
+      flex
+      flex-wrap
+      justify-center
+      gap-4
+    ">
 
+      <div className="
+        flex
+        items-center
+        gap-2
+        rounded-2xl
+        bg-white
+        px-5
+        py-3
+        shadow-lg
+        border
+        border-gray-100
+      ">
+        <FiShield className="text-indigo-600" />
+        <span className="text-sm font-medium text-gray-700">
+          100% Secure
+        </span>
+      </div>
 
-          <p className="
-            mt-4
-            text-gray-600
-            max-w-2xl
-            mx-auto
-            text-lg
-            leading-8
-          ">
-            Extract selected pages from PDF documents instantly.
-            Secure browser-based processing with no file uploads.
-          </p>
+      <div className="
+        flex
+        items-center
+        gap-2
+        rounded-2xl
+        bg-white
+        px-5
+        py-3
+        shadow-lg
+        border
+        border-gray-100
+      ">
+        <FiZap className="text-indigo-600" />
+        <span className="text-sm font-medium text-gray-700">
+          Instant Processing
+        </span>
+      </div>
 
-        </section>
+      <div className="
+        flex
+        items-center
+        gap-2
+        rounded-2xl
+        bg-white
+        px-5
+        py-3
+        shadow-lg
+        border
+        border-gray-100
+      ">
+        <FiCheckCircle className="text-indigo-600" />
+        <span className="text-sm font-medium text-gray-700">
+          No Registration
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 
 
 
@@ -208,76 +284,150 @@ const blob = new Blob(
         ">
 
 
-          <div className="
-            rounded-3xl
-            border
-            border-white/60
-            bg-white/80
-            p-8
-            shadow-xl
-            backdrop-blur
-          ">
+          <div
+  className="
+    group
+    relative
+    overflow-hidden
+    rounded-[32px]
+    border
+    border-white/70
+    bg-white/80
+    backdrop-blur-xl
+    p-8
+    shadow-xl
+    transition-all
+    duration-300
+    hover:-translate-y-1
+    hover:shadow-2xl
+  "
+>
+<div className="flex items-center justify-between mb-8">
 
+  <div className="flex items-center gap-4">
 
-            <div className="
-              flex
-              items-center
-              gap-3
-              mb-6
-            ">
+    <div
+      className="
+        flex
+        h-14
+        w-14
+        items-center
+        justify-center
+        rounded-2xl
+        bg-gradient-to-br
+        from-indigo-500
+        via-indigo-600
+        to-purple-600
+        text-white
+        shadow-lg
+      "
+    >
+      <FiUploadCloud size={28} />
+    </div>
 
-              <div className="
-                p-3
-                rounded-2xl
-                bg-indigo-100
-                text-indigo-600
-              ">
-                <FiUploadCloud size={25}/>
-              </div>
+    <div>
 
-              <h2 className="text-xl font-bold">
-                Upload PDF
-              </h2>
+      <h2 className="text-2xl font-bold text-gray-900">
+        Upload PDF
+      </h2>
 
-            </div>
+      <p className="mt-1 text-sm text-gray-500">
+        Select a PDF file to extract specific pages.
+      </p>
 
+    </div>
 
-            <label className="
-              cursor-pointer
-              block
-              rounded-2xl
-              border-2
-              border-dashed
-              border-indigo-200
-              p-10
-              text-center
-              hover:border-indigo-500
-              transition
-            ">
+  </div>
 
-              <FiFileText
-                className="
-                  mx-auto
-                  text-indigo-500
-                  mb-4
-                "
-                size={45}
-              />
+  <span
+    className="
+      rounded-full
+      bg-indigo-50
+      px-3
+      py-1
+      text-xs
+      font-semibold
+      text-indigo-700
+      border
+      border-indigo-100
+    "
+  >
+    Secure
+  </span>
 
-              <p className="text-gray-600">
-                Click to select PDF file
-              </p>
+</div>
 
+            <label
+  className="
+    group
+    relative
+    block
+    cursor-pointer
+    overflow-hidden
+    rounded-3xl
+    border-2
+    border-dashed
+    border-indigo-200
+    bg-gradient-to-br
+    from-indigo-50
+    via-white
+    to-purple-50
+    p-12
+    text-center
+    transition-all
+    duration-300
+    hover:border-indigo-500
+    hover:shadow-xl
+    hover:scale-[1.01]
+  "
+>
 
-              <input
-                type="file"
-                accept="application/pdf"
-                hidden
-                onChange={handleUpload}
-              />
+  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
 
-            </label>
+  <div className="relative z-10">
 
+    <div
+      className="
+        mx-auto
+        mb-6
+        flex
+        h-20
+        w-20
+        items-center
+        justify-center
+        rounded-3xl
+        bg-gradient-to-br
+        from-indigo-500
+        to-purple-600
+        text-white
+        shadow-xl
+      "
+    >
+      <FiUploadCloud size={38} />
+    </div>
+
+    <h3 className="text-xl font-bold text-gray-900">
+      Drag & Drop your PDF
+    </h3>
+
+    <p className="mt-3 text-gray-600">
+      or <span className="font-semibold text-indigo-600">browse your device</span>
+    </p>
+
+    <p className="mt-4 text-sm text-gray-500">
+      Supports PDF files only
+    </p>
+
+  </div>
+
+  <input
+    type="file"
+    accept="application/pdf"
+    hidden
+    onChange={handleUpload}
+  />
+
+</label>
 
             {file && (
               <div className="
