@@ -28,7 +28,10 @@ export default function CharacterCounter() {
     text.trim()
       ? text.split(/[.!?]+/).filter(Boolean).length
       : 0;
-
+const paragraphs =
+  text.trim()
+    ? text.split(/\n\s*\n/).filter(Boolean).length
+    : 0;
 
 
   const clearText = () => {
@@ -160,8 +163,7 @@ export default function CharacterCounter() {
             leading-8
             "
           >
-            Count characters, words and sentences instantly with our fast
-            privacy-friendly online character counter.
+            Count characters, characters without spaces, words, sentences, and paragraphs instantly with Soupxor's free online Character Counter. Fast, accurate, private, and browser-based.
           </p>
 
 
@@ -277,14 +279,14 @@ export default function CharacterCounter() {
 
 
           <div
-            className="
-            mt-8
-            grid
-            grid-cols-2
-            md:grid-cols-4
-            gap-5
-            "
-          >
+  className="
+  mt-8
+  grid
+  grid-cols-2
+  md:grid-cols-5
+  gap-5
+  "
+>
 
 
             <StatCard
@@ -309,7 +311,10 @@ export default function CharacterCounter() {
               title="Sentences"
               value={sentences}
             />
-
+<StatCard
+  title="Paragraphs"
+  value={paragraphs}
+/>
 
           </div>
 

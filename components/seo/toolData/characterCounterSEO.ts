@@ -137,12 +137,13 @@ export const characterCounterSEO = {
       question: "Can bloggers and writers use this tool?",
       answer:
         "Yes. Bloggers, journalists, authors, copywriters, and content creators use it to optimise articles, website content, newsletters, and marketing copy.",
-    },
+       },
     {
       question: "Is the Character Counter useful for SEO?",
       answer:
         "Yes. SEO professionals frequently use character counting when writing titles, meta descriptions, headings, snippets, and search-optimised content.",
-    },    {
+    },
+    {
       question: "Can I use this tool for social media posts?",
       answer:
         "Yes. You can easily check character limits before publishing content on X (Twitter), LinkedIn, Facebook, Instagram, Threads, YouTube descriptions, and many other platforms.",
@@ -163,11 +164,21 @@ export const characterCounterSEO = {
         "Yes. Developers can quickly measure text length for UI labels, database fields, API payloads, validation rules, documentation, and application content.",
     },
     {
-      question: "Why should I choose Soupxor Character Counter?",
-      answer:
-        "Soupxor focuses on speed, privacy, accuracy, and simplicity. The tool performs all calculations locally inside your browser while providing instant and reliable text statistics.",
-    },
-  ],
+  question: "Why should I choose Soupxor Character Counter?",
+  answer:
+    "Soupxor focuses on speed, privacy, accuracy, and simplicity. The tool performs all calculations locally inside your browser while providing instant and reliable text statistics.",
+},
+{
+  question: "What counts as a character?",
+  answer:
+    "A character includes every letter, number, punctuation mark, symbol, and space in your text. Soupxor displays both the total character count including spaces and the count excluding spaces to help meet different writing requirements.",
+},
+{
+  question: "How many characters are recommended for a Google title?",
+  answer:
+    "Although there is no fixed limit, Google search results generally display page titles best at around 50 to 60 characters. Keeping titles within this range can help prevent truncation in search results.",
+},
+],
 
   howTo: [
     {
@@ -230,23 +241,30 @@ export const characterCounterSEO = {
         text:
           "Every calculation happens locally inside your browser. Your text is never uploaded to external servers, stored in databases, or shared with third parties, making the tool suitable for confidential documents and professional work.",
       },
-      {
+            {
         title: "Fast, Accurate, and Browser-Based",
         text:
           "No software installation, browser extensions, or account registration are required. Simply open the page, paste your content, and receive instant statistics from any device.",
-      },      {
+      },
+      {
         title: "Ideal for Everyday Writing Tasks",
         text:
           "From academic essays and assignments to professional emails, resumes, cover letters, articles, product descriptions, and documentation, Soupxor Character Counter simplifies text analysis for every type of writing.",
       },
-      {
-        title: "Why Choose Soupxor Character Counter?",
-        text:
-          "Soupxor is designed with performance, privacy, and usability in mind. Our Character Counter delivers instant results, modern responsive design, browser-based processing, and an intuitive interface without collecting or storing your text.",
-      },
-    ],
-  },
+     {
+  title: "Why Choose Soupxor Character Counter?",
+  text:
+    "Soupxor is designed with performance, privacy, and usability in mind. Our Character Counter delivers instant results, modern responsive design, browser-based processing, and an intuitive interface without collecting or storing your text.",
+},
 
+{
+  title: "Common Character Limits for Popular Platforms",
+  text:
+    "Different websites and applications have their own character limits. Google SEO titles generally perform best at around 50–60 characters, while meta descriptions are commonly displayed within approximately 150–160 characters. X (formerly Twitter) allows up to 280 characters per post, Instagram bios support up to 150 characters, LinkedIn headlines can contain up to 220 characters, and YouTube titles can be up to 100 characters. Using a Character Counter before publishing helps ensure your content fits platform requirements without being cut off.",
+},
+
+],
+},
   relatedTools: [
     {
       title: "Word Counter",
