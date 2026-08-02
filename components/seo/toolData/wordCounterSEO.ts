@@ -146,10 +146,10 @@ export const wordCounterSEO = {
         "No. The tool works directly in your browser without downloads, extensions, or additional software.",
     },
     {
-      question: "Why choose Soupxor Word Counter?",
-      answer:
-        "Soupxor Word Counter combines speed, accuracy, privacy, and simplicity by providing instant text analysis without collecting user content.",
-    },
+  question: "Why choose Soupxor Word Counter?",
+  answer:
+    "Soupxor Word Counter provides a fast, accurate, and privacy-friendly way to analyze your writing. It instantly counts words, characters, sentences, paragraphs, and reading time directly in your browser without requiring registration or storing your text. It is designed for students, writers, bloggers, marketers, SEO professionals, and content creators who need reliable text analysis.",
+},
   ],
 
   howTo: [
@@ -252,37 +252,37 @@ export const wordCounterSEO = {
   },
 
   relatedTools: [
-    {
-      title: "Character Counter",
-      description:
-        "Count characters, spaces, words, and text statistics instantly.",
-      href: "/tools/character-counter",
-    },
-    {
-      title: "Password Generator",
-      description:
-        "Create strong and secure passwords instantly with customizable options.",
-      href: "/tools/password-generator",
-    },
-    {
-      title: "JSON Formatter",
-      description:
-        "Format, validate, and beautify JSON data online.",
-      href: "/tools/json-formatter",
-    },
-    {
-      title: "QR Code Generator",
-      description:
-        "Create custom QR codes quickly for links, text, and information.",
-      href: "/tools/qr-code-generator",
-    },
-    {
-      title: "PDF Merge",
-      description:
-        "Combine multiple PDF files into one document online.",
-      href: "/tools/pdf-merge",
-    },
-  ],
+  {
+    title: "Character Counter",
+    description:
+      "Count characters, spaces, words, and text statistics instantly with an online character analysis tool.",
+    href: "/tools/character-counter",
+  },
+  {
+    title: "JSON Formatter",
+    description:
+      "Format, validate, and beautify JSON data online for developers and technical content workflows.",
+    href: "/tools/json-formatter",
+  },
+  {
+    title: "Password Generator",
+    description:
+      "Create strong and secure passwords instantly with customizable security options.",
+    href: "/tools/password-generator",
+  },
+  {
+    title: "Percentage Calculator",
+    description:
+      "Calculate percentages quickly for academic, business, and everyday calculations.",
+    href: "/tools/percentage-calculator",
+  },
+  {
+    title: "Age Calculator",
+    description:
+      "Calculate exact age differences using dates with a simple online calculator.",
+    href: "/tools/age-calculator",
+  },
+],
 };
 
 
@@ -291,11 +291,11 @@ export const wordCounterSEO = {
 export const wordCounterMetadata = generateToolMetadata({
 
   title:
-    "Free Word Counter Tool - Count Words, Characters & Reading Time Online | Soupxor",
+     "Free Online Word Counter - Count Words, Characters & Reading Time | Soupxor",
+
 
   description:
-    "Use Soupxor's free Word Counter tool to instantly count words, characters, sentences, paragraphs, and reading time online. Fast, accurate, privacy-friendly, and perfect for students, writers, bloggers, SEO professionals, and content creators.",
-
+   "Use Soupxor's free online Word Counter to instantly count words, characters, sentences, paragraphs, and reading time. A fast, accurate, and privacy-friendly text analysis tool for students, writers, bloggers, SEO professionals, and content creators.",
   keywords: [
 
     // Primary Keywords

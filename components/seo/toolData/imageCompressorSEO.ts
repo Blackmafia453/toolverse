@@ -4,16 +4,13 @@ export const imageCompressorSEO = {
   name: "Image Compressor",
 
   description:
-    "Free online Image Compressor to reduce JPG, JPEG, PNG, and WebP file sizes while maintaining quality. Compress images instantly in your browser with secure local processing.",
-
+    "Free online Image Compressor to reduce JPG, JPEG, PNG, and WebP file sizes while maintaining quality. Compress and optimize images instantly in your browser with secure privacy-focused processing.",
 
   url:
     "https://soupxor.com/tools/image-compressor",
 
-
   category:
     "Image Tool",
-
 
   keywords: [
 
@@ -30,47 +27,55 @@ export const imageCompressorSEO = {
     "compress png",
     "compress webp",
     "image size reducer",
+    "photo compressor online",
     "image optimizer",
 
     // Long-tail keywords
     "compress image without losing quality",
     "reduce image file size online free",
     "compress photos online instantly",
-    "free jpg png compressor without signup",
+    "free image compressor without signup",
     "browser based image compressor",
     "compress images for website speed",
+    "optimize images before uploading",
+    "reduce photo size without losing quality",
+
+    // Website & SEO intent keywords
+    "image optimization tool",
+    "website image compressor",
+    "improve website loading speed",
+    "core web vitals image optimization",
+    "web performance optimization",
 
     // Semantic keywords
-    "image optimization",
-    "website performance",
-    "core web vitals",
-    "page speed optimization",
-    "digital asset optimization"
+    "digital asset optimization",
+    "image file size reducer",
+    "faster website images",
+    "compressed image files",
+    "online photo optimization"
 
   ],
-
 
 
   features: [
 
     "Compress JPG, JPEG, PNG, and WebP images",
 
-    "Reduce image file size instantly",
+    "Reduce image file size while maintaining quality",
 
-    "Maintain image quality during compression",
+    "Optimize photos for websites and online sharing",
 
-    "Browser-based local processing",
+    "Browser-based local image processing",
 
     "No image uploads or storage",
 
-    "Works on desktop and mobile",
+    "No account or registration required",
 
-    "No registration required",
+    "Works on desktop and mobile devices",
 
-    "Fast image optimization"
+    "Fast and secure image optimization"
 
   ],
-
 
 
   faqs: [
@@ -80,18 +85,16 @@ export const imageCompressorSEO = {
         "What is an Image Compressor?",
 
       answer:
-        "An Image Compressor is an online tool that reduces image file size while maintaining the best possible visual quality. It helps optimize images for websites, sharing, and storage.",
-
+        "An Image Compressor is an online tool that reduces image file size while preserving visual quality. It helps optimize photos for websites, storage, and faster sharing."
     },
 
 
     {
       question:
-        "Which image formats does Soupxor Image Compressor support?",
+        "Which image formats are supported?",
 
       answer:
-        "Soupxor Image Compressor supports popular formats including JPG, JPEG, PNG, and WebP images.",
-
+        "Soupxor Image Compressor supports popular image formats including JPG, JPEG, PNG, and WebP for easy online compression."
     },
 
 
@@ -100,8 +103,7 @@ export const imageCompressorSEO = {
         "Is Soupxor Image Compressor free?",
 
       answer:
-        "Yes. Soupxor Image Compressor is completely free and works directly in your browser without requiring registration.",
-
+        "Yes. Soupxor Image Compressor is completely free and works directly in your browser without signup, installation, or account creation."
     },
 
 
@@ -110,18 +112,16 @@ export const imageCompressorSEO = {
         "Are my images uploaded to a server?",
 
       answer:
-        "No. Image processing happens locally in your browser. Your images are not uploaded, stored, or shared.",
-
+        "No. Image compression happens locally inside your browser. Your images are not uploaded, stored, or shared with external servers."
     },
 
 
     {
       question:
-        "Will compression reduce image quality?",
+        "Can I compress images without losing quality?",
 
       answer:
-        "The tool is designed to reduce file size while keeping image quality as high as possible. The final result depends on the original image and compression settings.",
-
+        "The tool reduces image file size while keeping the best possible visual quality. Final results depend on the original image and compression settings."
     },
 
 
@@ -130,12 +130,19 @@ export const imageCompressorSEO = {
         "Why should I compress images for websites?",
 
       answer:
-        "Compressed images load faster, improve website performance, reduce bandwidth usage, and can contribute to better user experience.",
-
+        "Compressed images help websites load faster, improve user experience, reduce bandwidth usage, and support better website performance."
     },
 
-  ],
 
+    {
+      question:
+        "Is image compression useful for SEO?",
+
+      answer:
+        "Yes. Optimized images can improve page loading speed and contribute to better website performance metrics such as Core Web Vitals."
+    }
+
+  ],
 
 
   howTo: [
@@ -145,8 +152,7 @@ export const imageCompressorSEO = {
         "Upload your image",
 
       text:
-        "Select or drag and drop a JPG, JPEG, PNG, or WebP image into the compressor tool.",
-
+        "Select or drag and drop a JPG, JPEG, PNG, or WebP image into the image compressor."
     },
 
 
@@ -155,8 +161,7 @@ export const imageCompressorSEO = {
         "Compress the image",
 
       text:
-        "The tool processes your image directly in the browser and reduces the file size while preserving quality.",
-
+        "The tool processes your image in the browser and reduces file size while maintaining quality."
     },
 
 
@@ -165,76 +170,67 @@ export const imageCompressorSEO = {
         "Download optimized image",
 
       text:
-        "Download the compressed image and use it for websites, documents, or online sharing.",
-
-    },
+        "Download the compressed image and use it for websites, documents, social media, or online sharing."
+    }
 
   ],
-
 
 
   content: {
 
     heading:
-      "Free Online Image Compressor to Reduce Image Size",
-
+      "Free Online Image Compressor to Reduce Image Size Without Losing Quality",
 
 
     sections: [
 
       {
         title:
-          "Compress Images Without Losing Quality",
+          "Compress Images Online Quickly",
 
         text:
-          "Soupxor Image Compressor helps reduce image file sizes while maintaining visual quality. Optimize your photos and graphics quickly without installing software.",
-
+          "Soupxor Image Compressor helps you reduce image file sizes instantly without installing software. Optimize photos and graphics directly from your browser."
       },
 
 
       {
         title:
-          "Improve Website Speed With Image Optimization",
+          "Reduce Image Size for Faster Websites",
 
         text:
-          "Large images can slow down websites. Compressing images helps improve loading speed, user experience, and overall website performance.",
-
+          "Large images can slow down website loading times. Compressing images helps improve page speed, user experience, and overall website performance."
       },
 
 
       {
         title:
-          "Support for JPG, PNG, JPEG, and WebP",
+          "Optimize JPG, PNG, JPEG, and WebP Images",
 
         text:
-          "Optimize the most commonly used image formats including JPG, PNG, JPEG, and WebP using one simple online compression tool.",
-
+          "Use one simple tool to compress commonly used image formats including JPG, PNG, JPEG, and WebP for web and digital use."
       },
 
 
       {
         title:
-          "Private Browser-Based Image Compression",
+          "Image Compression for SEO and Performance",
 
         text:
-          "Your images remain private because processing happens locally inside your browser. No files are uploaded or stored.",
-
+          "Optimized images reduce unnecessary file size and help websites deliver faster pages, better performance, and improved user experience."
       },
 
 
       {
         title:
-          "Use Image Compressor Anywhere",
+          "Private Browser-Based Image Processing",
 
         text:
-          "The tool works across desktop, tablet, and mobile devices, allowing you to compress images whenever needed.",
+          "Your images remain private because compression happens locally in your browser. Files are not uploaded or stored on external servers."
+      }
 
-      },
-
-    ],
+    ]
 
   },
-
 
 
   relatedTools: [
@@ -247,8 +243,7 @@ export const imageCompressorSEO = {
         "Convert JPG images into PNG format instantly.",
 
       href:
-        "/tools/jpg-to-png",
-
+        "/tools/jpg-to-png"
     },
 
 
@@ -260,28 +255,24 @@ export const imageCompressorSEO = {
         "Convert PNG images into JPG format online.",
 
       href:
-        "/tools/png-to-jpg",
-
+        "/tools/png-to-jpg"
     },
 
 
     {
       title:
-        "PDF Merge",
+        "QR Code Generator",
 
       description:
-        "Combine PDF files quickly online.",
+        "Create QR codes from URLs and text instantly.",
 
       href:
-        "/tools/pdf-merge",
+        "/tools/qr-code-generator"
+    }
 
-    },
-
-
-  ],
+  ]
 
 };
-
 
 
 // Next.js Metadata System
@@ -289,12 +280,10 @@ export const imageCompressorSEO = {
 export const imageCompressorMetadata = generateToolMetadata({
 
   title:
-    "Free Image Compressor - Compress JPG PNG WebP Images Online",
-
+    "Free Image Compressor Online - Compress JPG PNG WebP Images",
 
   description:
-    "Compress JPG, PNG, JPEG, and WebP images online for free with Soupxor. Reduce image size while maintaining quality using secure browser-based compression.",
-
+    "Compress JPG, PNG, JPEG, and WebP images online for free with Soupxor. Reduce image size without losing quality using secure browser-based image optimization.",
 
   keywords: [
 
@@ -310,13 +299,14 @@ export const imageCompressorMetadata = generateToolMetadata({
 
     "compress webp",
 
-    "image optimizer"
+    "image optimizer",
+
+    "photo compressor online"
 
   ],
 
-
   slug:
-    "image-compressor",
+    "image-compressor"
 
 });
 
