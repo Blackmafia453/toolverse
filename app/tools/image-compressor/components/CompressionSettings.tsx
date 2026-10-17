@@ -77,7 +77,7 @@ export default function CompressionSettings({
       <input
         type="range"
         min="20"
-        max="90"
+        max="100"
         value={quality}
         onChange={(e) => setQuality(Number(e.target.value))}
         className="
