@@ -61,7 +61,7 @@ export default function CompressionResult({
 
 
 
-      <h3
+      <p
         className="
         mt-6
         text-2xl
@@ -70,7 +70,7 @@ export default function CompressionResult({
         "
       >
         Compression Complete
-      </h3>
+      </p>
 
 
 

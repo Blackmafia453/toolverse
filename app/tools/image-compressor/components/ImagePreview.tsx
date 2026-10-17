@@ -36,7 +36,7 @@ export default function ImagePreview({
         "
       >
 
-        <h3
+        <p
           className="
           text-xl
           font-bold
@@ -44,7 +44,7 @@ export default function ImagePreview({
           "
         >
           Original Image
-        </h3>
+        </p>
 
 
         <span

@@ -69,7 +69,7 @@ export default function ImageUploadCard({
 
 
 
-        <h3
+        <p
           className="
           mt-6
           text-2xl
@@ -78,7 +78,7 @@ export default function ImageUploadCard({
           "
         >
           Upload Your Image
-        </h3>
+        </p>
 
 
 

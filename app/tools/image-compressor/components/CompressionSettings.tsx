@@ -35,7 +35,7 @@ export default function CompressionSettings({
       >
 
         <div>
-          <h3
+          <p
             className="
             text-xl
             font-bold
@@ -43,7 +43,7 @@ export default function CompressionSettings({
             "
           >
             Compression Quality
-          </h3>
+          </p>
 
           <p
             className="
