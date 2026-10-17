@@ -64,20 +64,9 @@ export default function ImageCompressor() {
       const ctx = canvas.getContext("2d");
 
 
-      let width = img.width;
-      let height = img.height;
-
-
-      const maxWidth = 1400;
-
-
-      if (width > maxWidth) {
-
-        height = (height * maxWidth) / width;
-
-        width = maxWidth;
-
-      }
+      // Preserve original image dimensions
+      const width = img.naturalWidth || img.width;
+      const height = img.naturalHeight || img.height;
 
 
       canvas.width = width;
@@ -85,14 +74,27 @@ export default function ImageCompressor() {
       canvas.height = height;
 
 
-      ctx?.drawImage(
-        img,
-        0,
-        0,
-        width,
-        height
-      );
+      if (ctx) {
+        // Fill white background for clean rendering with transparent images
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, width, height);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, 0, 0, width, height);
+      }
 
+
+
+      // Map slider quality (20-100) to browser canvas JPEG encoder quality:
+      // - Values 20-90 map directly to 0.20-0.90, preserving existing behavior and compression.
+      // - Values 90-100 scale smoothly from 0.90 to 0.92.
+      // In browser canvas (Skia/libjpeg), passing 1.0 (100%) disables quantization tables (sets to all 1s)
+      // and disables chroma subsampling (switches to 4:4:4), causing the file size to explode (3x-5x).
+      // Capping encoder quality at 0.92 preserves maximum perceptual quality while preventing the file bloat.
+      const encoderQuality =
+        quality <= 90
+          ? quality / 100
+          : 0.90 + ((quality - 90) / 10) * 0.02;
 
 
       canvas.toBlob(
@@ -113,7 +115,7 @@ export default function ImageCompressor() {
 
         "image/jpeg",
 
-        quality / 100
+        encoderQuality
 
       );
 
