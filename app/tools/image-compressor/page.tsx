@@ -8,6 +8,8 @@ import ImagePreview from "./components/ImagePreview";
 import CompressionSettings from "./components/CompressionSettings";
 import CompressionResult from "./components/CompressionResult";
 import ImageInfo from "./components/ImageInfo";
+import ToolSections from "@/components/seo/ToolSections";
+import { imageCompressorSEO } from "@/components/seo/toolData/imageCompressorSEO";
 
 
 export default function ImageCompressor() {
@@ -222,6 +224,7 @@ export default function ImageCompressor() {
 
         <ImageInfo />
 
+        <ToolSections data={imageCompressorSEO} />
 
       </div>
 
